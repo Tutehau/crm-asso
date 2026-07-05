@@ -59,6 +59,19 @@ async function writeJSON(file, data) {
   await fsPromises.writeFile(file, JSON.stringify(data, null, 2), 'utf8');
 }
 
+async function getSmtpTransporter() {
+  const settings = await readJSON(SETTINGS_FILE);
+  return nodemailer.createTransport({
+    host: settings.smtpHost || 'smtp.example.com',
+    port: parseInt(settings.smtpPort) || 587,
+    secure: settings.smtpPort === 465,
+    auth: {
+      user: settings.smtpUser || '',
+      pass: settings.smtpPass || ''
+    }
+  });
+}
+
 // ----- Middleware de vérification d'authentification -----
 function isAuth(req, res, next) {
   if (req.session && req.session.userId) {
@@ -66,6 +79,13 @@ function isAuth(req, res, next) {
   }
   console.log('⛔ Accès non authentifié, session:', req.session);
   res.status(401).json({ message: 'Non authentifié' });
+}
+
+function isAdmin(req, res, next) {
+  if (req.session && req.session.role === 'admin') {
+    return next();
+  }
+  res.status(403).json({ message: 'Accès refusé : Administrateur requis' });
 }
 
 // ==================== ROUTES AUTH ====================
@@ -87,7 +107,10 @@ app.post('/api/setup-admin', async (req, res) => {
   const admin = {
     id: crypto.randomUUID(),
     username,
-    password: hashedPassword
+    password: hashedPassword,
+    role: 'admin',
+    status: 'active',
+    email: ''
   };
 
   await writeJSON(USERS_FILE, [admin]);
@@ -96,7 +119,7 @@ app.post('/api/setup-admin', async (req, res) => {
 
 app.get('/api/me', (req, res) => {
   if (req.session && req.session.userId) {
-    res.json({ username: req.session.username, loggedIn: true });
+    res.json({ username: req.session.username, role: req.session.role, loggedIn: true });
   } else {
     res.status(401).json({ loggedIn: false });
   }
@@ -120,6 +143,7 @@ app.post('/api/login', async (req, res) => {
   // Créer la session
   req.session.userId = user.id;
   req.session.username = user.username;
+  req.session.role = user.role || 'user';
   req.session.save((err) => {
     if (err) {
       console.error('❌ Erreur sauvegarde session:', err);
@@ -250,28 +274,106 @@ app.post('/api/send-email', isAuth, async (req, res) => {
   }
 
   try {
-    const transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST || 'smtp.example.com',
-      port: parseInt(process.env.SMTP_PORT || '587'),
-      secure: process.env.SMTP_PORT === '465',
-      auth: {
-        user: process.env.SMTP_USER || 'contact@tahiti-farani.fr',
-        pass: process.env.SMTP_PASS || 'Tutehau21@'
-      }
-    });
+    const transporter = await getSmtpTransporter();
+    const settings = await readJSON(SETTINGS_FILE);
 
     await transporter.sendMail({
-      from: process.env.SMTP_USER || '"CRM Association" <contact@tahiti-farani.fr>',
+      from: settings.smtpFrom || '"CRM Association" <contact@tahiti-farani.fr>',
       to: targetEmail,
       subject: subject,
       html: html
     });
-
     res.json({ message: 'Email envoyé avec succès !' });
   } catch (error) {
     console.error('❌ Erreur d\'envoi email:', error);
     res.status(500).json({ message: 'Erreur lors de l\'envoi de l\'email', error: error.message });
   }
+});
+
+// ==================== GESTION DES UTILISATEURS (Admin) ====================
+
+app.get('/api/admin/users', isAuth, isAdmin, async (req, res) => {
+  const users = await readJSON(USERS_FILE);
+  // On ne renvoie pas les mots de passe ni les tokens
+  const safeUsers = users.map(({ password, invitationToken, ...u }) => u);
+  res.json(safeUsers);
+});
+
+app.post('/api/admin/invite', isAuth, isAdmin, async (req, res) => {
+  const { email, username } = req.body;
+  if (!email || !username) return res.status(400).json({ message: 'Email et nom d\'utilisateur requis' });
+
+  const users = await readJSON(USERS_FILE);
+  if (users.find(u => u.username === username)) {
+    return res.status(409).json({ message: 'Ce nom d\'utilisateur est déjà pris' });
+  }
+  if (users.find(u => u.email === email)) {
+    return res.status(409).json({ message: 'Cet email est déjà associé à un compte' });
+  }
+
+  const token = crypto.randomUUID();
+  const newUser = {
+    id: crypto.randomUUID(),
+    username,
+    email,
+    password: '', // Sera défini lors du join
+    role: 'user',
+    status: 'pending',
+    invitationToken: token,
+    createdAt: new Date().toISOString()
+  };
+
+  users.push(newUser);
+  await writeJSON(USERS_FILE, users);
+
+  try {
+    const transporter = await getSmtpTransporter();
+    const settings = await readJSON(SETTINGS_FILE);
+    const joinLink = `http://localhost:3000/join.html?token=${token}`;
+
+    await transporter.sendMail({
+      from: settings.smtpFrom || '"CRM Association" <contact@tahiti-farani.fr>',
+      to: email,
+      subject: 'Invitation à rejoindre le CRM de l\'association',
+      html: `<div style="font-family: sans-serif; line-height: 1.6;">
+        <h2>Bienvenue ${username} !</h2>
+        <p>Vous avez été invité à rejoindre la plateforme de gestion de l'association ${settings.assoName || 'notre association'}.</p>
+        <p>Pour activer votre compte et définir votre mot de passe, veuillez cliquer sur le lien ci-dessous :</p>
+        <p><a href="${joinLink}" style="display: inline-block; padding: 10px 20px; background: #2c3e50; color: white; text-decoration: none; border-radius: 5px;">Activer mon compte</a></p>
+        <p>Ou copiez-collez ce lien : ${joinLink}</p>
+        <p>À bientôt !</p>
+      </div>`
+    });
+    res.json({ message: 'Invitation envoyée avec succès' });
+  } catch (error) {
+    console.error('❌ Erreur invitation email:', error);
+    // On crée l\'utilisateur quand même, mais on signale l\'erreur d\'email
+    res.status(500).json({ message: 'Utilisateur créé, mais l\'email d\'invitation n\'a pas pu être envoyé', error: error.message });
+  }
+});
+
+app.delete('/api/admin/users/:id', isAuth, isAdmin, async (req, res) => {
+  const users = await readJSON(USERS_FILE);
+  const filtered = users.filter(u => u.id !== req.params.id);
+  if (filtered.length === users.length) return res.status(404).json({ message: 'Utilisateur non trouvé' });
+  await writeJSON(USERS_FILE, filtered);
+  res.json({ message: 'Utilisateur supprimé' });
+});
+
+app.post('/api/auth/join', async (req, res) => {
+  const { token, password } = req.body;
+  if (!token || !password) return res.status(400).json({ message: 'Token et mot de passe requis' });
+
+  const users = await readJSON(USERS_FILE);
+  const user = users.find(u => u.invitationToken === token);
+  if (!user) return res.status(404).json({ message: 'L\'invitation est invalide ou a expiré' });
+
+  user.password = await bcrypt.hash(password, 10);
+  user.status = 'active';
+  delete user.invitationToken;
+
+  await writeJSON(USERS_FILE, users);
+  res.json({ message: 'Compte activé avec succès !' });
 });
 
 // ==================== PARAMÈTRES ====================
@@ -364,5 +466,4 @@ app.put('/api/profile/username', isAuth, async (req, res) => {
 // Démarrer le serveur
 app.listen(PORT, () => {
   console.log(`🚀 CRM démarré sur http://localhost:${PORT}`);
-  console.log(`🔑 Identifiants par défaut : admin / admin123`);
 });

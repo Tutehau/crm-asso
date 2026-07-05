@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CRM · Utilisateurs</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="main-content">
+    <header class="page-header">
+      <div>
+        <h1>Gestion des Utilisateurs</h1>
+        <p>Administrez les accès à la plateforme</p>
+      </div>
+      <button id="open-invite-modal" class="btn-primary">
+        <i class="fas fa-user-plus"></i> Inviter un utilisateur
+      </button>
+    </header>
+
+    <section class="users-section">
+      <div class="card table-card">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Utilisateur</th>
+              <th>Rôle</th>
+              <th>Statut</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="users-table-body">
+            <!-- Rempli par JS -->
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Modal Invitation -->
+    <div id="invite-modal" class="modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Inviter un utilisateur</h2>
+          <button class="close-modal">&times;</button>
+        </div>
+        <form id="invite-form">
+          <div class="form-group">
+            <label for="invite-username">Nom d'utilisateur</label>
+            <input type="text" id="invite-username" placeholder="ex: jean.dupont" required />
+          </div>
+          <div class="form-group">
+            <label for="invite-email">Email</label>
+            <input type="email" id="invite-email" placeholder="jean@example.com" required />
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn-secondary close-modal">Annuler</button>
+            <button type="submit" class="btn-primary">Envoyer l'invitation</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </main>
+  <script src="shared.js"></script>
+  <script src="users.js"></script>
+</body>
+</html>

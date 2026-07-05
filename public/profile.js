@@ -1,7 +1,7 @@
 (async () => {
   const user = await requireAuth();
   if (!user) return;
-  renderLayout('profile', user.username);
+  renderLayout('profile', user.username, user.role);
   document.getElementById('profile-username').textContent = user.username;
   document.getElementById('profile-session-user').textContent = user.username;
   document.getElementById('profile-session-since').textContent = new Date().toLocaleString('fr-FR');

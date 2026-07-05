@@ -27,7 +27,7 @@ const resultsCount = document.getElementById('results-count');
 (async () => {
   const user = await requireAuth();
   if (!user) return;
-  renderLayout('contacts', user.username);
+  renderLayout('contacts', user.username, user.role);
   loadContacts();
 })();
 

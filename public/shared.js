@@ -11,12 +11,13 @@ async function requireAuth() {
 }
 
 // Injecte la sidebar et la topbar
-function renderLayout(activePage, username) {
+function renderLayout(activePage, username, role = 'user') {
   const pages = [
     { id: 'dashboard', icon: 'fa-chart-pie', label: 'Tableau de bord', href: '/dashboard.html' },
     { id: 'contacts', icon: 'fa-users', label: 'Contacts', href: '/contacts.html' },
     { id: 'emails', icon: 'fa-envelope', label: 'Emails', href: '/emails.html' },
     { id: 'import-export', icon: 'fa-file-import', label: 'Import / Export', href: '/import-export.html' },
+    ...(role === 'admin' ? [{ id: 'users', icon: 'fa-user-shield', label: 'Utilisateurs', href: '/users.html' }] : []),
     { id: 'separator' },
     { id: 'settings', icon: 'fa-cog', label: 'Paramètres', href: '/settings.html' },
     { id: 'profile', icon: 'fa-user-circle', label: 'Profil', href: '/profile.html' },
@@ -27,6 +28,7 @@ function renderLayout(activePage, username) {
     contacts: 'Gestion des contacts',
     emails: 'Envoi d\'emails',
     'import-export': 'Import / Export',
+    users: 'Gestion des utilisateurs',
     settings: 'Paramètres',
     profile: 'Mon profil'
   };

@@ -1,7 +1,7 @@
 (async () => {
   const user = await requireAuth();
   if (!user) return;
-  renderLayout('settings', user.username);
+  renderLayout('settings', user.username, user.role);
   loadSettings();
 })();
 

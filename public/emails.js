@@ -11,23 +11,48 @@ const emailStatus = document.getElementById('email-status');
 
 const templates = {
   welcome: {
-    subject: 'Bienvenue dans notre association',
-    body: '<h2>Bienvenue !</h2>\n<p>Nous sommes ravis de vous accueillir parmi nous.</p>\n<p>N\'hesitez pas a nous contacter pour toute question.</p>\n<p>Cordialement,<br><strong>L\'equipe</strong></p>'
+    subject: 'Bienvenue au sein de notre association !',
+    body: `<div style="font-family: sans-serif; line-height: 1.6; color: #333; max-width: 600px;">
+  <h2 style="color: #2c3e50;">Bienvenue parmi nous !</h2>
+  <p>Nous sommes ravis de vous accueillir au sein de notre association.</p>
+  <p>Votre engagement est précieux et nous avons hâte de collaborer avec vous pour mener à bien nos projets communs.</p>
+  <p>N'hésitez pas à nous contacter si vous avez des questions ou besoin d'informations complémentaires.</p>
+  <p>À très bientôt,<br><strong>L'équipe administrative</strong></p>
+</div>`
   },
   meeting: {
-    subject: 'Prochaine reunion',
-    body: '<h2>Reunion a venir</h2>\n<p>Nous vous informons de la prochaine reunion :</p>\n<ul>\n<li><strong>Date :</strong> [DATE]</li>\n<li><strong>Lieu :</strong> [LIEU]</li>\n<li><strong>Ordre du jour :</strong> [SUJET]</li>\n</ul>\n<p>Merci de confirmer votre presence.</p>'
+    subject: 'Convocation : Prochaine réunion de l\'association',
+    body: `<div style="font-family: sans-serif; line-height: 1.6; color: #333; max-width: 600px;">
+  <h2 style="color: #2c3e50;">Réunion à venir</h2>
+  <p>Bonjour,</p>
+  <p>Nous vous informons de la tenue de notre prochaine réunion dont voici les détails :</p>
+  <div style="background: #f9f9f9; padding: 15px; border-radius: 8px; border-left: 4px solid #2c3e50; margin: 20px 0;">
+    <p><strong>📅 Date :</strong> [DATE]</p>
+    <p><strong>📍 Lieu :</strong> [LIEU]</p>
+    <p><strong>📝 Ordre du jour :</strong> [SUJET]</p>
+  </div>
+  <p>Nous vous remercions de bien vouloir confirmer votre présence par retour d'email.</p>
+  <p>Cordialement,<br><strong>Le Bureau</strong></p>
+</div>`
   },
   reminder: {
-    subject: 'Rappel',
-    body: '<h2>Rappel</h2>\n<p>Ce message est un rappel concernant :</p>\n<p><strong>[SUJET DU RAPPEL]</strong></p>\n<p>Merci de votre attention.</p>\n<p>Cordialement</p>'
+    subject: 'Rappel : [Sujet du rappel]',
+    body: `<div style="font-family: sans-serif; line-height: 1.6; color: #333; max-width: 600px;">
+  <h2 style="color: #2c3e50;">Rappel important</h2>
+  <p>Bonjour,</p>
+  <p>Ce message est un rappel concernant l'élément suivant :</p>
+  <p style="font-size: 1.1em; font-weight: 500; color: #e67e22; margin: 20px 0;"><strong>[Sujet du rappel]</strong></p>
+  <p>Nous vous remercions de faire le nécessaire dans les meilleurs délais.</p>
+  <p>Restant à votre disposition pour tout complément d'information.</p>
+  <p>Cordialement,<br><strong>L'équipe</strong></p>
+</div>`
   }
 };
 
 (async () => {
   const user = await requireAuth();
   if (!user) return;
-  renderLayout('emails', user.username);
+  renderLayout('emails', user.username, user.role);
   loadEmailContacts();
   setupTemplates();
 })();

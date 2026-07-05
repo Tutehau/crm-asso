@@ -5,7 +5,7 @@ const importBtn = document.getElementById('import-btn');
 (async () => {
   const user = await requireAuth();
   if (!user) return;
-  renderLayout('import-export', user.username);
+  renderLayout('import-export', user.username, user.role);
 })();
 
 exportBtn.addEventListener('click', async () => {

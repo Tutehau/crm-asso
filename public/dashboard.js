@@ -3,7 +3,7 @@ let chartInstance = null;
 (async () => {
   const user = await requireAuth();
   if (!user) return;
-  renderLayout('dashboard', user.username);
+  renderLayout('dashboard', user.username, user.role);
   loadDashboard();
 })();
 
