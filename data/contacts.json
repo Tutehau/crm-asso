@@ -1,0 +1,44 @@
+[
+  {
+    "id": "27952813-ad5a-4b6c-880b-7dfe01820397",
+    "nom": "T.Hina",
+    "prenom": "Tatau",
+    "telephone": "000000000000",
+    "email": "shothinatatau@gmail.com",
+    "adresse": "55 rue de la république, 83340 Le Luc (Var)",
+    "dateNaissance": "",
+    "statut": "Autre",
+    "tags": "Exposants, Tatau",
+    "notes": "Tatoueuse & Boutique Polynésienne. Facebook/Instagram : T.Hina Tatau",
+    "createdAt": "2026-07-05T20:13:08.220Z",
+    "updatedAt": "2026-07-05T20:16:28.302Z"
+  },
+  {
+    "id": "79bbd765-ddb3-4a46-b860-e0822de5554c",
+    "nom": "Nonomiti",
+    "prenom": "Accessoires",
+    "telephone": "0638582174",
+    "email": "info.nonomiti@gmail.com",
+    "adresse": "",
+    "dateNaissance": "",
+    "statut": "Autre",
+    "tags": "Exposants, Accessoires",
+    "notes": "Boutique en ligne pour particulier, professionel & milieu associatif. Fleurs artificielles, textiles, cadeaux.",
+    "createdAt": "2026-07-05T20:16:08.043Z",
+    "updatedAt": "2026-07-05T20:16:38.588Z"
+  },
+  {
+    "id": "66de7b67-0659-4752-9f49-9b1d2c448ccc",
+    "nom": "Pako",
+    "prenom": "Tatau",
+    "telephone": "0766363695",
+    "email": "park.tatau@yahoo.fr",
+    "adresse": "",
+    "dateNaissance": "",
+    "statut": "Autre",
+    "tags": "Exposants, Tatau",
+    "notes": "Tatoueur polynésien présent dans les villes de :\n- Grenoble (38)\n- Bordeaux (33)\n- Vierzon (18)\nFacebook/Instagram : Pako Tatau",
+    "createdAt": "2026-07-05T20:18:43.196Z",
+    "updatedAt": "2026-07-05T20:18:43.196Z"
+  }
+]
