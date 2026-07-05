@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CRM · Import / Export</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="main-content">
+    <div class="ie-grid">
+      <div class="ie-card">
+        <h3><i class="fas fa-file-export"></i> Exporter</h3>
+        <p>Téléchargez tous vos contacts au format CSV.</p>
+        <button id="export-btn" class="btn-primary"><i class="fas fa-download"></i> Exporter en CSV</button>
+      </div>
+      <div class="ie-card">
+        <h3><i class="fas fa-file-import"></i> Importer</h3>
+        <p>Importez un fichier CSV (colonnes : nom, prenom, telephone, email, adresse, dateNaissance, statut, tags, notes).</p>
+        <input type="file" id="import-file" accept=".csv" />
+        <button id="import-btn" class="btn-secondary"><i class="fas fa-upload"></i> Importer</button>
+        <div id="import-status"></div>
+      </div>
+    </div>
+  </main>
+
+  <script src="shared.js"></script>
+  <script src="import-export.js"></script>
+</body>
+</html>

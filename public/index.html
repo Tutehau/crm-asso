@@ -3,14 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CRM · Association</title>
-  <!-- Font Awesome 6 -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />  <!-- Chart.js pour le dashboard -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <!-- PapaParse pour le CSV -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-  <!-- DOMPurify pour la sécurité HTML -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.9/purify.min.js"></script>
+  <title>CRM · Connexion</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -43,11 +40,11 @@
     <form id="login-form">
       <div class="input-group">
         <i class="fas fa-user"></i>
-        <input type="text" id="login-username" placeholder="Identifiant" value="admin" />
+        <input type="text" id="login-username" placeholder="Identifiant" />
       </div>
       <div class="input-group">
         <i class="fas fa-lock"></i>
-        <input type="password" id="login-password" placeholder="Mot de passe" value="admin123" />
+        <input type="password" id="login-password" placeholder="Mot de passe" />
       </div>
       <button type="submit" class="btn-primary"><i class="fas fa-sign-in-alt"></i> Se connecter</button>
       <div id="login-error" class="message error" style="display:none;"></div>
@@ -55,173 +52,6 @@
   </div>
 </div>
 
-<!-- Application (masquée tant que non connecté) -->
-<div id="app" style="display:none;">
-  <!-- Sidebar -->
-  <aside class="sidebar">
-    <div class="brand">
-      <i class="fas fa-address-card"></i> CRM Asso
-    </div>
-    <nav>
-      <a href="#" class="nav-link active" data-view="dashboard">
-        <i class="fas fa-chart-pie"></i> <span>Tableau de bord</span>
-      </a>
-      <a href="#" class="nav-link" data-view="contacts">
-        <i class="fas fa-users"></i> <span>Contacts</span>
-      </a>
-      <a href="#" class="nav-link" data-view="emails">
-        <i class="fas fa-envelope"></i> <span>Emails</span>
-      </a>
-      <a href="#" class="nav-link" data-view="import-export">
-        <i class="fas fa-file-import"></i> <span>Import / Export</span>
-      </a>
-    </nav>
-    <div class="sidebar-footer">
-      <button id="logout-btn" class="btn-secondary"><i class="fas fa-sign-out-alt"></i> Déconnexion</button>
-    </div>
-  </aside>
-
-  <!-- Contenu principal -->
-  <main class="main-content">
-    <!-- En-tête -->
-    <header class="topbar">
-      <h2 id="page-title">Tableau de bord</h2>
-      <div class="user-info">
-        <i class="fas fa-user-circle"></i>
-        <span id="current-user">Admin</span>
-      </div>
-    </header>
-
-    <!-- ===== VUE DASHBOARD ===== -->
-    <section id="view-dashboard" class="view active">
-      <div class="stats-grid" id="stats-grid">
-        <div class="stat-card"><h3>Total</h3><p id="stat-total">0</p></div>
-        <div class="stat-card"><h3>Membres</h3><p id="stat-members">0</p></div>
-        <div class="stat-card"><h3>Bénévoles</h3><p id="stat-volunteers">0</p></div>
-        <div class="stat-card"><h3>Bureau</h3><p id="stat-board">0</p></div>
-      </div>
-      <div class="charts-row">
-        <div class="chart-box">
-          <canvas id="statusChart"></canvas>
-        </div>
-        <div class="recent-box">
-          <h4><i class="fas fa-clock"></i> Derniers contacts</h4>
-          <ul id="recent-list"></ul>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===== VUE EMAILS ===== -->
-    <section id="view-emails" class="view">
-      <div class="email-container">
-        <div class="email-form">
-          <h3><i class="fas fa-paper-plane"></i> Nouveau Message</h3>
-          <div class="input-group">
-            <label>Destinataire</label>
-            <select id="email-contact-select">
-              <option value="">-- Sélectionnez un contact --</option>
-            </select>
-            <input type="email" id="email-custom-address" placeholder="Ou saisissez un email manuellement" />
-          </div>
-          <div class="input-group">
-            <label>Sujet</label>
-            <input type="text" id="email-subject" placeholder="Sujet de l'email" />
-          </div>
-          <div class="input-group">
-            <label>Corps du message (HTML)</label>
-            <div class="email-editor-container">
-              <textarea id="email-body" placeholder="Saisissez votre code HTML ici..."></textarea>
-              <div id="email-preview" class="email-preview-box" style="display:none;"></div>
-            </div>
-            <button id="toggle-preview-btn" class="btn-secondary">Aperçu HTML</button>
-          </div>
-          <button id="send-email-btn" class="btn-primary"><i class="fas fa-paper-plane"></i> Envoyer l'email</button>
-        </div>
-      </div>
-    </section>
-
-    <!-- ===== VUE CONTACTS ===== -->
-    <section id="view-contacts" class="view">
-      <div class="toolbar">
-        <button id="add-contact-btn" class="btn-primary"><i class="fas fa-plus"></i> Nouveau contact</button>
-        <div class="filters">
-          <select id="status-filter">
-            <option value="">Tous les statuts</option>
-            <option value="Membre">Membre</option>
-            <option value="Bénévole">Bénévole</option>
-            <option value="Bureau">Bureau</option>
-            <option value="Supporter">Supporter</option>
-            <option value="Autre">Autre</option>
-          </select>
-          <div class="search-bar">
-            <i class="fas fa-search"></i>
-            <input type="text" id="search-contacts" placeholder="Rechercher..." />
-          </div>
-        </div>
-      </div>
-      <div class="table-wrapper">
-        <table>
-          <thead><tr>
-            <th>Nom / Prénom</th><th>Téléphone</th><th>Email</th><th>Statut</th><th>Tags</th><th>Actions</th>
-          </tr></thead>
-          <tbody id="contacts-body"><tr class="empty-row"><td colspan="6"><i class="fas fa-inbox"></i> Aucun contact</td></tr></tbody>
-        </table>
-      </div>
-    </section>
-
-    <!-- ===== VUE IMPORT / EXPORT ===== -->
-    <section id="view-import-export" class="view">
-      <div class="ie-grid">
-        <div class="ie-card">
-          <h3><i class="fas fa-file-export"></i> Exporter</h3>
-          <p>Téléchargez tous vos contacts au format CSV.</p>
-          <button id="export-btn" class="btn-primary"><i class="fas fa-download"></i> Exporter en CSV</button>
-        </div>
-        <div class="ie-card">
-          <h3><i class="fas fa-file-import"></i> Importer</h3>
-          <p>Importez un fichier CSV (colonnes : nom, prenom, telephone, email, adresse, dateNaissance, statut, tags, notes).</p>
-          <input type="file" id="import-file" accept=".csv" />
-          <button id="import-btn" class="btn-secondary"><i class="fas fa-upload"></i> Importer</button>
-          <div id="import-status"></div>
-        </div>
-      </div>
-    </section>
-
-  </main>
-</div>
-
-<!-- MODAL Contact (Ajout / Édition / Détail) -->
-<div id="contact-modal" class="modal">
-  <div class="modal-content">
-    <span class="modal-close">&times;</span>
-    <h2 id="modal-title"><i class="fas fa-user-plus"></i> Nouveau contact</h2>
-    <form id="contact-form">
-      <input type="hidden" id="edit-id" />
-      <div class="form-grid">
-        <div class="input-group"><i class="fas fa-user"></i><input type="text" id="f-nom" placeholder="Nom *" required /></div>
-        <div class="input-group"><i class="fas fa-user"></i><input type="text" id="f-prenom" placeholder="Prénom *" required /></div>
-        <div class="input-group"><i class="fas fa-phone"></i><input type="tel" id="f-telephone" placeholder="Téléphone *" required /></div>
-        <div class="input-group"><i class="fas fa-envelope"></i><input type="email" id="f-email" placeholder="Email" /></div>
-        <div class="input-group"><i class="fas fa-map-marker-alt"></i><input type="text" id="f-adresse" placeholder="Adresse" /></div>
-        <div class="input-group"><i class="fas fa-calendar-alt"></i><input type="date" id="f-dateNaissance" /></div>
-        <div class="input-group"><i class="fas fa-tag"></i>
-          <select id="f-statut">
-            <option value="Membre">Membre</option><option value="Bénévole">Bénévole</option>
-            <option value="Bureau">Bureau</option><option value="Supporter">Supporter</option>
-            <option value="Autre">Autre</option>
-          </select>
-        </div>
-        <div class="input-group"><i class="fas fa-tags"></i><input type="text" id="f-tags" placeholder="Tags (séparés par des virgules)" /></div>
-        <div class="input-group full-width"><i class="fas fa-sticky-note"></i><textarea id="f-notes" placeholder="Notes / Commentaires"></textarea></div>
-      </div>
-      <div class="form-actions">
-        <button type="submit" id="modal-submit" class="btn-primary"><i class="fas fa-save"></i> Enregistrer</button>
-        <button type="button" class="btn-secondary modal-close-btn">Annuler</button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<script src="script.js"></script>
+<script src="login.js"></script>
 </body>
 </html>

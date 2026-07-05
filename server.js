@@ -33,12 +33,16 @@ app.use(session({
 const DATA_DIR = path.join(__dirname, 'data');
 const CONTACTS_FILE = path.join(DATA_DIR, 'contacts.json');
 const USERS_FILE = path.join(DATA_DIR, 'users.json');
+const SETTINGS_FILE = path.join(DATA_DIR, 'settings.json');
 
 // Initialisation des fichiers
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR);
 if (!fs.existsSync(CONTACTS_FILE)) fs.writeFileSync(CONTACTS_FILE, JSON.stringify([]));
 if (!fs.existsSync(USERS_FILE)) {
   fs.writeFileSync(USERS_FILE, JSON.stringify([]));
+}
+if (!fs.existsSync(SETTINGS_FILE)) {
+  fs.writeFileSync(SETTINGS_FILE, JSON.stringify({ smtpHost: '', smtpPort: 587, smtpUser: '', smtpPass: '', smtpFrom: '', assoName: '', itemsPerPage: 25 }));
 }
 
 // Helpers JSON
@@ -179,6 +183,11 @@ app.put('/api/contacts/:id', isAuth, async (req, res) => {
   res.json(contacts[index]);
 });
 
+app.delete('/api/contacts/all', isAuth, async (req, res) => {
+  await writeJSON(CONTACTS_FILE, []);
+  res.json({ message: 'Tous les contacts ont été supprimés' });
+});
+
 app.delete('/api/contacts/:id', isAuth, async (req, res) => {
   let contacts = await readJSON(CONTACTS_FILE);
   const filtered = contacts.filter(c => c.id !== req.params.id);
@@ -246,13 +255,13 @@ app.post('/api/send-email', isAuth, async (req, res) => {
       port: parseInt(process.env.SMTP_PORT || '587'),
       secure: process.env.SMTP_PORT === '465',
       auth: {
-        user: process.env.SMTP_USER || 'user@example.com',
-        pass: process.env.SMTP_PASS || 'password'
+        user: process.env.SMTP_USER || 'contact@tahiti-farani.fr',
+        pass: process.env.SMTP_PASS || 'Tutehau21@'
       }
     });
 
     await transporter.sendMail({
-      from: process.env.SMTP_USER || '"CRM Association" <no-reply@example.com>',
+      from: process.env.SMTP_USER || '"CRM Association" <contact@tahiti-farani.fr>',
       to: targetEmail,
       subject: subject,
       html: html
@@ -263,6 +272,93 @@ app.post('/api/send-email', isAuth, async (req, res) => {
     console.error('❌ Erreur d\'envoi email:', error);
     res.status(500).json({ message: 'Erreur lors de l\'envoi de l\'email', error: error.message });
   }
+});
+
+// ==================== PARAMÈTRES ====================
+app.get('/api/settings', isAuth, async (req, res) => {
+  const settings = await readJSON(SETTINGS_FILE);
+  const safe = { ...settings };
+  delete safe.smtpPass;
+  res.json(safe);
+});
+
+app.put('/api/settings/smtp', isAuth, async (req, res) => {
+  const { smtpHost, smtpPort, smtpUser, smtpPass, smtpFrom } = req.body;
+  const settings = await readJSON(SETTINGS_FILE);
+  settings.smtpHost = smtpHost || '';
+  settings.smtpPort = parseInt(smtpPort) || 587;
+  settings.smtpUser = smtpUser || '';
+  if (smtpPass) settings.smtpPass = smtpPass;
+  settings.smtpFrom = smtpFrom || '';
+  await writeJSON(SETTINGS_FILE, settings);
+  res.json({ message: 'Configuration SMTP enregistrée' });
+});
+
+app.post('/api/settings/smtp/test', isAuth, async (req, res) => {
+  const settings = await readJSON(SETTINGS_FILE);
+  if (!settings.smtpHost || !settings.smtpUser) {
+    return res.status(400).json({ message: 'Configurez d\'abord le SMTP (hôte et utilisateur requis)' });
+  }
+  try {
+    const transporter = nodemailer.createTransport({
+      host: settings.smtpHost,
+      port: settings.smtpPort,
+      secure: settings.smtpPort === 465,
+      auth: { user: settings.smtpUser, pass: settings.smtpPass || '' }
+    });
+    await transporter.verify();
+    res.json({ message: 'Connexion SMTP réussie' });
+  } catch (error) {
+    res.status(500).json({ message: `Échec : ${error.message}` });
+  }
+});
+
+app.put('/api/settings/preferences', isAuth, async (req, res) => {
+  const { assoName, itemsPerPage } = req.body;
+  const settings = await readJSON(SETTINGS_FILE);
+  settings.assoName = assoName || '';
+  settings.itemsPerPage = parseInt(itemsPerPage) || 25;
+  await writeJSON(SETTINGS_FILE, settings);
+  res.json({ message: 'Préférences enregistrées' });
+});
+
+// ==================== PROFIL ====================
+app.put('/api/profile/password', isAuth, async (req, res) => {
+  const { currentPassword, newPassword } = req.body;
+  if (!currentPassword || !newPassword) {
+    return res.status(400).json({ message: 'Mot de passe actuel et nouveau requis' });
+  }
+  const users = await readJSON(USERS_FILE);
+  const user = users.find(u => u.id === req.session.userId);
+  if (!user) return res.status(404).json({ message: 'Utilisateur introuvable' });
+
+  const match = await bcrypt.compare(currentPassword, user.password);
+  if (!match) return res.status(401).json({ message: 'Mot de passe actuel incorrect' });
+
+  user.password = await bcrypt.hash(newPassword, 10);
+  await writeJSON(USERS_FILE, users);
+  res.json({ message: 'Mot de passe mis à jour' });
+});
+
+app.put('/api/profile/username', isAuth, async (req, res) => {
+  const { newUsername, password } = req.body;
+  if (!newUsername || !password) {
+    return res.status(400).json({ message: 'Nouveau nom et mot de passe requis' });
+  }
+  const users = await readJSON(USERS_FILE);
+  const user = users.find(u => u.id === req.session.userId);
+  if (!user) return res.status(404).json({ message: 'Utilisateur introuvable' });
+
+  const match = await bcrypt.compare(password, user.password);
+  if (!match) return res.status(401).json({ message: 'Mot de passe incorrect' });
+
+  const existing = users.find(u => u.username === newUsername && u.id !== user.id);
+  if (existing) return res.status(409).json({ message: 'Ce nom d\'utilisateur existe déjà' });
+
+  user.username = newUsername;
+  req.session.username = newUsername;
+  await writeJSON(USERS_FILE, users);
+  res.json({ message: 'Nom d\'utilisateur mis à jour' });
 });
 
 // Démarrer le serveur

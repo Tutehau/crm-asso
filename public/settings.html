@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CRM · Paramètres</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="main-content">
+    <div class="settings-container">
+      <!-- SMTP -->
+      <div class="settings-card">
+        <div class="settings-card-header">
+          <div class="settings-card-icon"><i class="fas fa-envelope-open-text"></i></div>
+          <div>
+            <h3>Configuration SMTP</h3>
+            <p>Paramètres du serveur d'envoi d'emails</p>
+          </div>
+        </div>
+        <form id="smtp-form" class="settings-form">
+          <div class="settings-form-grid">
+            <div class="input-group">
+              <i class="fas fa-server"></i>
+              <input type="text" id="smtp-host" placeholder="Hôte SMTP (ex: smtp.gmail.com)" />
+            </div>
+            <div class="input-group">
+              <i class="fas fa-hashtag"></i>
+              <input type="number" id="smtp-port" placeholder="Port (587 ou 465)" />
+            </div>
+            <div class="input-group">
+              <i class="fas fa-user"></i>
+              <input type="text" id="smtp-user" placeholder="Utilisateur SMTP" />
+            </div>
+            <div class="input-group">
+              <i class="fas fa-key"></i>
+              <input type="password" id="smtp-pass" placeholder="Mot de passe SMTP" />
+            </div>
+            <div class="input-group full-width">
+              <i class="fas fa-at"></i>
+              <input type="text" id="smtp-from" placeholder="Email expéditeur (ex: asso@example.com)" />
+            </div>
+          </div>
+          <div class="settings-actions">
+            <button type="button" id="test-smtp-btn" class="btn-secondary"><i class="fas fa-vial"></i> Tester la connexion</button>
+            <button type="submit" class="btn-primary"><i class="fas fa-save"></i> Enregistrer</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Préférences -->
+      <div class="settings-card">
+        <div class="settings-card-header">
+          <div class="settings-card-icon"><i class="fas fa-sliders-h"></i></div>
+          <div>
+            <h3>Préférences de l'application</h3>
+            <p>Personnalisez le comportement de l'application</p>
+          </div>
+        </div>
+        <form id="preferences-form" class="settings-form">
+          <div class="settings-form-grid">
+            <div class="input-group">
+              <i class="fas fa-building"></i>
+              <input type="text" id="pref-asso-name" placeholder="Nom de l'association" />
+            </div>
+            <div class="input-group">
+              <i class="fas fa-list-ol"></i>
+              <input type="number" id="pref-items-per-page" placeholder="Contacts par page (défaut: 25)" min="5" max="100" />
+            </div>
+          </div>
+          <div class="settings-actions">
+            <button type="submit" class="btn-primary"><i class="fas fa-save"></i> Enregistrer</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Danger zone -->
+      <div class="settings-card settings-card-danger">
+        <div class="settings-card-header">
+          <div class="settings-card-icon danger"><i class="fas fa-exclamation-triangle"></i></div>
+          <div>
+            <h3>Zone dangereuse</h3>
+            <p>Actions irréversibles, à utiliser avec prudence</p>
+          </div>
+        </div>
+        <div class="settings-danger-actions">
+          <div class="danger-action">
+            <div>
+              <strong>Supprimer tous les contacts</strong>
+              <p>Cette action est irréversible. Tous les contacts seront définitivement perdus.</p>
+            </div>
+            <button id="delete-all-contacts-btn" class="btn-danger"><i class="fas fa-trash-alt"></i> Tout supprimer</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="shared.js"></script>
+  <script src="settings.js"></script>
+</body>
+</html>
