@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CRM · Profil</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="main-content">
+    <div class="profile-container">
+      <!-- Carte profil -->
+      <div class="profile-header-card">
+        <div class="profile-avatar">
+          <i class="fas fa-user-circle"></i>
+        </div>
+        <div class="profile-identity">
+          <h3 id="profile-username">—</h3>
+          <span class="profile-role"><i class="fas fa-shield-alt"></i> Administrateur</span>
+        </div>
+      </div>
+
+      <!-- Changer mot de passe -->
+      <div class="profile-card">
+        <div class="profile-card-header">
+          <i class="fas fa-lock"></i>
+          <h3>Changer le mot de passe</h3>
+        </div>
+        <form id="change-password-form" class="profile-form">
+          <div class="input-group">
+            <i class="fas fa-lock"></i>
+            <input type="password" id="current-password" placeholder="Mot de passe actuel" required />
+          </div>
+          <div class="input-group">
+            <i class="fas fa-key"></i>
+            <input type="password" id="new-password" placeholder="Nouveau mot de passe" required />
+          </div>
+          <div class="input-group">
+            <i class="fas fa-check-double"></i>
+            <input type="password" id="confirm-password" placeholder="Confirmer le nouveau mot de passe" required />
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn-primary"><i class="fas fa-save"></i> Mettre à jour</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Changer nom d'utilisateur -->
+      <div class="profile-card">
+        <div class="profile-card-header">
+          <i class="fas fa-user-edit"></i>
+          <h3>Modifier le nom d'utilisateur</h3>
+        </div>
+        <form id="change-username-form" class="profile-form">
+          <div class="input-group">
+            <i class="fas fa-user"></i>
+            <input type="text" id="new-username" placeholder="Nouveau nom d'utilisateur" required />
+          </div>
+          <div class="input-group">
+            <i class="fas fa-lock"></i>
+            <input type="password" id="username-password-confirm" placeholder="Confirmez votre mot de passe" required />
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn-primary"><i class="fas fa-save"></i> Mettre à jour</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Informations de session -->
+      <div class="profile-card">
+        <div class="profile-card-header">
+          <i class="fas fa-info-circle"></i>
+          <h3>Informations de session</h3>
+        </div>
+        <div class="profile-info-list">
+          <div class="profile-info-item">
+            <span class="profile-info-label">Connecté en tant que</span>
+            <span class="profile-info-value" id="profile-session-user">—</span>
+          </div>
+          <div class="profile-info-item">
+            <span class="profile-info-label">Session active</span>
+            <span class="profile-info-value" id="profile-session-since">—</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="shared.js"></script>
+  <script src="profile.js"></script>
+</body>
+</html>

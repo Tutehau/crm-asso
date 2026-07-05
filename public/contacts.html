@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CRM · Contacts</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <main class="main-content">
+    <!-- Stats rapides contacts -->
+    <div class="contacts-summary">
+      <div class="contacts-summary-item">
+        <i class="fas fa-address-book"></i>
+        <div>
+          <span class="contacts-summary-value" id="count-total">0</span>
+          <span class="contacts-summary-label">contacts</span>
+        </div>
+      </div>
+      <div class="contacts-summary-item">
+        <i class="fas fa-id-card"></i>
+        <div>
+          <span class="contacts-summary-value" id="count-membres">0</span>
+          <span class="contacts-summary-label">membres</span>
+        </div>
+      </div>
+      <div class="contacts-summary-item">
+        <i class="fas fa-hand-holding-heart"></i>
+        <div>
+          <span class="contacts-summary-value" id="count-benevoles">0</span>
+          <span class="contacts-summary-label">benevoles</span>
+        </div>
+      </div>
+      <div class="contacts-summary-item">
+        <i class="fas fa-crown"></i>
+        <div>
+          <span class="contacts-summary-value" id="count-bureau">0</span>
+          <span class="contacts-summary-label">bureau</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toolbar -->
+    <div class="contacts-toolbar">
+      <div class="contacts-toolbar-left">
+        <button id="add-contact-btn" class="btn-primary"><i class="fas fa-plus"></i> Nouveau contact</button>
+      </div>
+      <div class="contacts-toolbar-right">
+        <div class="search-bar search-bar-lg">
+          <i class="fas fa-search"></i>
+          <input type="text" id="search-contacts" placeholder="Rechercher par nom, email, telephone..." />
+          <kbd class="search-kbd">/</kbd>
+        </div>
+        <select id="status-filter" class="filter-select">
+          <option value="">Tous les statuts</option>
+          <option value="Membre">Membre</option>
+          <option value="Benevole">Benevole</option>
+          <option value="Bureau">Bureau</option>
+          <option value="Supporter">Supporter</option>
+          <option value="Autre">Autre</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Table contacts -->
+    <div class="table-wrapper contacts-table">
+      <table>
+        <thead><tr>
+          <th><i class="fas fa-user"></i> Contact</th>
+          <th><i class="fas fa-phone"></i> Telephone</th>
+          <th><i class="fas fa-envelope"></i> Email</th>
+          <th><i class="fas fa-bookmark"></i> Statut</th>
+          <th><i class="fas fa-tags"></i> Tags</th>
+          <th>Actions</th>
+        </tr></thead>
+        <tbody id="contacts-body">
+          <tr class="empty-row"><td colspan="6">
+            <div class="empty-state">
+              <div class="empty-state-icon"><i class="fas fa-users"></i></div>
+              <h4>Aucun contact</h4>
+              <p>Commencez par ajouter votre premier contact</p>
+            </div>
+          </td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Compteur resultats -->
+    <div class="contacts-footer">
+      <span id="results-count"><i class="fas fa-filter"></i> 0 resultats</span>
+    </div>
+  </main>
+
+  <!-- MODAL Contact -->
+  <div id="contact-modal" class="modal">
+    <div class="modal-content modal-contact">
+      <div class="modal-header">
+        <div class="modal-header-icon"><i class="fas fa-user-plus" id="modal-icon"></i></div>
+        <div>
+          <h2 id="modal-title">Nouveau contact</h2>
+          <p class="modal-subtitle" id="modal-subtitle">Remplissez les informations du contact</p>
+        </div>
+        <span class="modal-close"><i class="fas fa-times"></i></span>
+      </div>
+      <form id="contact-form">
+        <input type="hidden" id="edit-id" />
+        <div class="modal-section">
+          <div class="modal-section-title"><i class="fas fa-user"></i> Identite</div>
+          <div class="form-grid">
+            <div class="input-group"><i class="fas fa-user"></i><input type="text" id="f-nom" placeholder="Nom *" required /></div>
+            <div class="input-group"><i class="fas fa-user-tag"></i><input type="text" id="f-prenom" placeholder="Prenom *" required /></div>
+          </div>
+        </div>
+        <div class="modal-section">
+          <div class="modal-section-title"><i class="fas fa-address-card"></i> Coordonnees</div>
+          <div class="form-grid">
+            <div class="input-group"><i class="fas fa-phone"></i><input type="tel" id="f-telephone" placeholder="Telephone *" required /></div>
+            <div class="input-group"><i class="fas fa-envelope"></i><input type="email" id="f-email" placeholder="Email" /></div>
+            <div class="input-group full-width"><i class="fas fa-map-marker-alt"></i><input type="text" id="f-adresse" placeholder="Adresse" /></div>
+          </div>
+        </div>
+        <div class="modal-section">
+          <div class="modal-section-title"><i class="fas fa-info-circle"></i> Informations</div>
+          <div class="form-grid">
+            <div class="input-group"><i class="fas fa-calendar-alt"></i><input type="date" id="f-dateNaissance" /></div>
+            <div class="input-group"><i class="fas fa-tag"></i>
+              <select id="f-statut">
+                <option value="Membre">Membre</option><option value="Benevole">Benevole</option>
+                <option value="Bureau">Bureau</option><option value="Supporter">Supporter</option>
+                <option value="Autre">Autre</option>
+              </select>
+            </div>
+            <div class="input-group full-width"><i class="fas fa-tags"></i><input type="text" id="f-tags" placeholder="Tags (separes par des virgules)" /></div>
+            <div class="input-group full-width"><i class="fas fa-sticky-note"></i><textarea id="f-notes" placeholder="Notes / Commentaires"></textarea></div>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary modal-close-btn"><i class="fas fa-times"></i> Annuler</button>
+          <button type="submit" id="modal-submit" class="btn-primary"><i class="fas fa-save"></i> Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="shared.js"></script>
+  <script src="contacts.js"></script>
+</body>
+</html>
