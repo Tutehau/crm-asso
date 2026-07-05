@@ -68,7 +68,9 @@ function renderUsersTable(users) {
     const btnDelete = document.createElement('button');
     btnDelete.className = 'btn-icon btn-danger';
     btnDelete.title = 'Supprimer';
-    btnDelete.innerHTML = '<i class="fas fa-trash"></i>';
+    const delIcon = document.createElement('i');
+    delIcon.className = 'fas fa-trash';
+    btnDelete.appendChild(delIcon);
     btnDelete.onclick = () => deleteUser(u.id);
 
     tdActions.appendChild(btnDelete);
