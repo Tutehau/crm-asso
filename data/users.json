@@ -2,6 +2,20 @@
   {
     "id": "8626c3c4-4b3d-4406-a223-d47202f27f24",
     "username": "Tutehau",
-    "password": "$2b$10$TOrCQGBmWk/j6DFlL7EtNuD2Bv/97W/jWGph9HOHWKaE.Tk95tG9C"
+    "password": "$2b$10$TOrCQGBmWk/j6DFlL7EtNuD2Bv/97W/jWGph9HOHWKaE.Tk95tG9C",
+    "email": "adamskewin.ei@gmail.com",
+    "role": "admin",
+    "status": "active",
+    "createdAt": "2025-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "0fc504e6-2989-4628-b4bd-8f7dbcd03849",
+    "username": "Kéwin",
+    "email": "contact@tutehau.com",
+    "password": "",
+    "role": "user",
+    "status": "pending",
+    "invitationToken": "ef290f52-21ba-4f3b-81d3-7cbc5e2f7279",
+    "createdAt": "2026-07-06T22:13:39.936Z"
   }
 ]

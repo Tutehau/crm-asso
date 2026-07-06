@@ -10,120 +10,261 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <script src="https://cdnjs.cloudflare.com/ajax/libs/dompurify/3.0.9/purify.min.js"></script>
   <link rel="stylesheet" href="style.css" />
+  <script>
+    const saved = localStorage.getItem('crm-theme');
+    if (saved) document.documentElement.setAttribute('data-theme', saved);
+    else if (window.matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.setAttribute('data-theme', 'dark');
+  </script>
 </head>
 <body>
   <main class="main-content">
-    <div class="email-layout">
-      <!-- Panneau composition -->
-      <div class="email-compose-panel">
-        <div class="email-compose-header">
-          <div class="email-compose-title">
-            <i class="fas fa-pen-to-square"></i>
-            <h3>Composer un message</h3>
-          </div>
-          <div class="email-status" id="email-status">
-            <i class="fas fa-circle"></i>
-            <span>Brouillon</span>
-          </div>
-        </div>
-
-        <!-- Destinataire -->
-        <div class="email-field">
-          <div class="email-field-label">
-            <i class="fas fa-user"></i>
-            <span>Destinataire</span>
-          </div>
-          <div class="email-field-inputs">
-            <select id="email-contact-select" class="email-select">
-              <option value="">-- Choisir un contact --</option>
-            </select>
-            <div class="email-field-separator">
-              <span>ou</span>
-            </div>
-            <div class="email-input-wrap">
-              <i class="fas fa-at"></i>
-              <input type="email" id="email-custom-address" placeholder="Saisir un email..." />
-            </div>
-          </div>
-        </div>
-
-        <!-- Sujet -->
-        <div class="email-field">
-          <div class="email-field-label">
-            <i class="fas fa-heading"></i>
-            <span>Sujet</span>
-          </div>
-          <div class="email-input-wrap">
-            <i class="fas fa-font"></i>
-            <input type="text" id="email-subject" placeholder="Objet du message..." />
-          </div>
-        </div>
-
-        <!-- Editeur -->
-        <div class="email-field email-field-grow">
-          <div class="email-field-label">
-            <i class="fas fa-code"></i>
-            <span>Corps du message</span>
-          </div>
-          <div class="email-editor">
-            <div class="email-editor-toolbar">
-              <button type="button" id="toggle-preview-btn" class="editor-toolbar-btn" title="Basculer apercu">
-                <i class="fas fa-eye" id="preview-icon"></i>
-                <span id="preview-label">Apercu</span>
-              </button>
-              <div class="editor-toolbar-separator"></div>
-              <span class="editor-hint"><i class="fas fa-info-circle"></i> HTML supporte</span>
-            </div>
-            <div class="email-editor-body">
-              <textarea id="email-body" placeholder="<h1>Bonjour,</h1>&#10;<p>Votre message ici...</p>"></textarea>
-              <div id="email-preview" class="email-preview-pane" style="display:none;"></div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Actions -->
-        <div class="email-actions">
-          <div class="email-actions-info">
-            <i class="fas fa-shield-alt"></i>
-            <span>Le contenu HTML est assaini avant l'affichage</span>
-          </div>
-          <button id="send-email-btn" class="btn-send">
-            <i class="fas fa-paper-plane"></i>
-            <span>Envoyer</span>
-          </button>
+    <!-- Stats -->
+    <div class="email-stats">
+      <div class="email-stat">
+        <div class="email-stat-icon total"><i class="fas fa-paper-plane"></i></div>
+        <div>
+          <div class="email-stat-value" id="es-total">0</div>
+          <div class="email-stat-label">Total envoyés</div>
         </div>
       </div>
-
-      <!-- Panneau conseils -->
-      <div class="email-tips-panel">
-        <div class="email-tips-card">
-          <div class="email-tips-icon"><i class="fas fa-lightbulb"></i></div>
-          <h4>Conseils d'envoi</h4>
-          <ul class="email-tips-list">
-            <li><i class="fas fa-check"></i> Configurez votre SMTP dans les parametres</li>
-            <li><i class="fas fa-check"></i> Utilisez du HTML pour un rendu professionnel</li>
-            <li><i class="fas fa-check"></i> Testez l'apercu avant d'envoyer</li>
-            <li><i class="fas fa-check"></i> Selectionnez un contact ou entrez un email</li>
-          </ul>
+      <div class="email-stat">
+        <div class="email-stat-icon sent"><i class="fas fa-check-circle"></i></div>
+        <div>
+          <div class="email-stat-value" id="es-sent">0</div>
+          <div class="email-stat-label">Réussis</div>
         </div>
+      </div>
+      <div class="email-stat">
+        <div class="email-stat-icon failed"><i class="fas fa-exclamation-circle"></i></div>
+        <div>
+          <div class="email-stat-value" id="es-failed">0</div>
+          <div class="email-stat-label">Échoués</div>
+        </div>
+      </div>
+      <div class="email-stat">
+        <div class="email-stat-icon month"><i class="fas fa-calendar-check"></i></div>
+        <div>
+          <div class="email-stat-value" id="es-month">0</div>
+          <div class="email-stat-label">Ce mois</div>
+        </div>
+      </div>
+    </div>
 
-        <div class="email-tips-card email-tips-templates">
-          <div class="email-tips-icon"><i class="fas fa-file-code"></i></div>
-          <h4>Modeles rapides</h4>
-          <div class="template-list">
-            <button class="template-btn" data-template="welcome">
-              <i class="fas fa-hand-wave"></i>
-              <span>Bienvenue</span>
-            </button>
-            <button class="template-btn" data-template="meeting">
-              <i class="fas fa-calendar"></i>
-              <span>Reunion</span>
-            </button>
-            <button class="template-btn" data-template="reminder">
-              <i class="fas fa-bell"></i>
-              <span>Rappel</span>
+    <!-- Tabs -->
+    <div class="email-tabs">
+      <button class="email-tab active" data-tab="compose">
+        <i class="fas fa-pen-to-square"></i>
+        <span>Composer</span>
+      </button>
+      <button class="email-tab" data-tab="history">
+        <i class="fas fa-clock-rotate-left"></i>
+        <span>Historique</span>
+        <span class="email-tab-badge" id="history-count">0</span>
+      </button>
+    </div>
+
+    <!-- ========== COMPOSE VIEW ========== -->
+    <div class="email-compose-view active" id="compose-view">
+      <div class="email-layout">
+        <div class="email-compose-panel" style="position:relative;">
+          <div class="email-compose-header">
+            <div class="email-compose-title">
+              <i class="fas fa-pen-to-square"></i>
+              <h3>Composer un message</h3>
+            </div>
+            <div style="display:flex;align-items:center;gap:12px;">
+              <span class="draft-saved" id="draft-indicator" style="display:none;">
+                <i class="fas fa-check-circle"></i> Brouillon sauvegardé
+              </span>
+              <div class="email-status" id="email-status">
+                <i class="fas fa-circle"></i>
+                <span>Brouillon</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recipient mode -->
+          <div class="email-field">
+            <div class="email-field-label">
+              <i class="fas fa-users"></i>
+              <span>Destinataire(s)</span>
+            </div>
+            <div class="recipient-mode-toggle">
+              <button class="recipient-mode-btn active" data-mode="single">
+                <i class="fas fa-user"></i> Individuel
+              </button>
+              <button class="recipient-mode-btn" data-mode="group">
+                <i class="fas fa-users-rectangle"></i> Par groupe
+              </button>
+              <button class="recipient-mode-btn" data-mode="manual">
+                <i class="fas fa-at"></i> Email libre
+              </button>
+            </div>
+
+            <!-- Single mode -->
+            <div id="recipient-single" class="recipient-panel">
+              <select id="email-contact-select" class="email-select">
+                <option value="">-- Choisir un contact --</option>
+              </select>
+            </div>
+
+            <!-- Group mode -->
+            <div id="recipient-group" class="recipient-panel" style="display:none;">
+              <div class="group-select" id="group-select"></div>
+              <div class="recipient-chips" id="group-chips" style="margin-top:10px;"></div>
+            </div>
+
+            <!-- Manual mode -->
+            <div id="recipient-manual" class="recipient-panel" style="display:none;">
+              <div class="email-input-wrap">
+                <i class="fas fa-at"></i>
+                <input type="email" id="email-custom-address" placeholder="Saisir un email..." />
+              </div>
+            </div>
+          </div>
+
+          <!-- Subject -->
+          <div class="email-field">
+            <div class="email-field-label">
+              <i class="fas fa-heading"></i>
+              <span>Sujet</span>
+            </div>
+            <div class="email-input-wrap">
+              <i class="fas fa-font"></i>
+              <input type="text" id="email-subject" placeholder="Objet du message..." />
+            </div>
+          </div>
+
+          <!-- Editor -->
+          <div class="email-field email-field-grow">
+            <div class="email-field-label">
+              <i class="fas fa-code"></i>
+              <span>Corps du message</span>
+            </div>
+            <div class="email-editor">
+              <div class="email-editor-toolbar">
+                <button type="button" id="toggle-preview-btn" class="editor-toolbar-btn" title="Basculer aperçu">
+                  <i class="fas fa-eye" id="preview-icon"></i>
+                  <span id="preview-label">Aperçu</span>
+                </button>
+                <div class="editor-toolbar-separator"></div>
+                <span class="editor-hint"><i class="fas fa-info-circle"></i> HTML supporté</span>
+              </div>
+              <!-- Format toolbar -->
+              <div class="format-toolbar">
+                <button type="button" class="format-btn" data-insert="bold" title="Gras"><i class="fas fa-bold"></i></button>
+                <button type="button" class="format-btn" data-insert="italic" title="Italique"><i class="fas fa-italic"></i></button>
+                <button type="button" class="format-btn" data-insert="underline" title="Souligné"><i class="fas fa-underline"></i></button>
+                <div class="format-sep"></div>
+                <button type="button" class="format-btn" data-insert="h1" title="Titre"><i class="fas fa-heading"></i></button>
+                <button type="button" class="format-btn" data-insert="p" title="Paragraphe"><i class="fas fa-paragraph"></i></button>
+                <button type="button" class="format-btn" data-insert="ul" title="Liste"><i class="fas fa-list-ul"></i></button>
+                <div class="format-sep"></div>
+                <button type="button" class="format-btn" data-insert="link" title="Lien"><i class="fas fa-link"></i></button>
+                <button type="button" class="format-btn" data-insert="image" title="Image"><i class="fas fa-image"></i></button>
+                <button type="button" class="format-btn" data-insert="hr" title="Séparateur"><i class="fas fa-minus"></i></button>
+                <div class="format-sep"></div>
+                <button type="button" class="format-btn" data-insert="color" title="Couleur"><i class="fas fa-palette"></i></button>
+                <button type="button" class="format-btn" data-insert="button" title="Bouton CTA"><i class="fas fa-square"></i></button>
+              </div>
+              <div class="email-editor-body">
+                <textarea id="email-body" placeholder="<h1>Bonjour,</h1>&#10;<p>Votre message ici...</p>"></textarea>
+                <div id="email-preview" class="email-preview-pane" style="display:none;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Actions -->
+          <div class="email-actions">
+            <div style="display:flex;align-items:center;gap:16px;">
+              <div class="email-actions-info">
+                <i class="fas fa-shield-alt"></i>
+                <span>HTML assaini avant affichage</span>
+              </div>
+              <button type="button" id="clear-draft-btn" class="btn-secondary" style="padding:8px 14px;font-size:0.78rem;">
+                <i class="fas fa-eraser"></i> Effacer
+              </button>
+            </div>
+            <button id="send-email-btn" class="btn-send">
+              <i class="fas fa-paper-plane"></i>
+              <span>Envoyer</span>
             </button>
           </div>
+
+          <!-- Sending overlay (hidden by default) -->
+          <div id="sending-overlay" class="sending-overlay" style="display:none;">
+            <div class="sending-spinner"></div>
+            <div class="sending-text" id="sending-text">Envoi en cours...</div>
+            <div class="sending-progress-bar">
+              <div class="sending-progress-fill" id="sending-progress" style="width:0%"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tips & templates panel -->
+        <div class="email-tips-panel">
+          <div class="email-tips-card">
+            <div class="email-tips-icon"><i class="fas fa-lightbulb"></i></div>
+            <h4>Conseils</h4>
+            <ul class="email-tips-list">
+              <li><i class="fas fa-check"></i> Configurez votre SMTP dans les paramètres</li>
+              <li><i class="fas fa-check"></i> Utilisez les boutons de formatage pour le HTML</li>
+              <li><i class="fas fa-check"></i> Testez l'aperçu avant d'envoyer</li>
+              <li><i class="fas fa-check"></i> L'envoi par groupe envoie à chaque membre individuellement</li>
+              <li><i class="fas fa-check"></i> Les brouillons sont sauvegardés automatiquement</li>
+            </ul>
+          </div>
+
+          <div class="email-tips-card email-tips-templates">
+            <div class="email-tips-icon"><i class="fas fa-file-code"></i></div>
+            <h4>Modèles rapides</h4>
+            <div class="template-list">
+              <button class="template-btn" data-template="welcome">
+                <i class="fas fa-hand-wave"></i>
+                <span>Bienvenue</span>
+              </button>
+              <button class="template-btn" data-template="meeting">
+                <i class="fas fa-calendar"></i>
+                <span>Réunion</span>
+              </button>
+              <button class="template-btn" data-template="reminder">
+                <i class="fas fa-bell"></i>
+                <span>Rappel</span>
+              </button>
+              <button class="template-btn" data-template="event">
+                <i class="fas fa-calendar-star"></i>
+                <span>Événement</span>
+              </button>
+              <button class="template-btn" data-template="newsletter">
+                <i class="fas fa-newspaper"></i>
+                <span>Newsletter</span>
+              </button>
+              <button class="template-btn" data-template="thankyou">
+                <i class="fas fa-heart"></i>
+                <span>Remerciement</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== HISTORY VIEW ========== -->
+    <div class="email-history-panel" id="history-view">
+      <div class="email-history-header">
+        <h3><i class="fas fa-clock-rotate-left" style="color:var(--primary);margin-right:8px;"></i> Historique des envois</h3>
+        <div style="display:flex;gap:8px;align-items:center;">
+          <div class="search-bar" style="padding:7px 12px;">
+            <i class="fas fa-search"></i>
+            <input type="text" id="email-history-search" placeholder="Rechercher..." style="width:180px;" />
+          </div>
+        </div>
+      </div>
+      <div class="email-history-list" id="email-history-list">
+        <div class="email-history-empty">
+          <i class="fas fa-inbox"></i>
+          <h4>Aucun email envoyé</h4>
+          <p>Vos emails envoyés apparaîtront ici</p>
         </div>
       </div>
     </div>

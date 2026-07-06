@@ -77,8 +77,13 @@ document.getElementById('preferences-form').addEventListener('submit', async (e)
 });
 
 document.getElementById('delete-all-contacts-btn').addEventListener('click', async () => {
-  if (!confirm('ATTENTION : Tous les contacts seront définitivement supprimés. Continuer ?')) return;
-  if (!confirm('Êtes-vous vraiment sûr ? Cette action est IRRÉVERSIBLE.')) return;
+  const confirmed = await showConfirm({
+    title: 'Supprimer TOUS les contacts',
+    message: 'Cette action est irréversible. Tous les contacts seront définitivement perdus. Êtes-vous absolument sûr ?',
+    confirmText: 'Tout supprimer',
+    type: 'danger'
+  });
+  if (!confirmed) return;
   try {
     const res = await fetch('/api/contacts/all', { method: 'DELETE' });
     if (!res.ok) throw new Error();

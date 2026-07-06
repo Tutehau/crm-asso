@@ -9,61 +9,144 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <link rel="stylesheet" href="style.css" />
+  <script>
+    const saved = localStorage.getItem('crm-theme');
+    if (saved) document.documentElement.setAttribute('data-theme', saved);
+    else if (window.matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.setAttribute('data-theme', 'dark');
+  </script>
 </head>
 <body>
   <main class="main-content">
-    <header class="page-header">
-      <div>
-        <h1>Gestion des Utilisateurs</h1>
-        <p>Administrez les accès à la plateforme</p>
+    <!-- Stats -->
+    <div class="users-stats">
+      <div class="users-stat">
+        <div class="users-stat-icon" style="background:var(--primary-glow);color:var(--primary);"><i class="fas fa-users"></i></div>
+        <div>
+          <div class="users-stat-value" id="us-total">0</div>
+          <div class="users-stat-label">Utilisateurs</div>
+        </div>
+      </div>
+      <div class="users-stat">
+        <div class="users-stat-icon" style="background:rgba(16,185,129,0.1);color:var(--success);"><i class="fas fa-check-circle"></i></div>
+        <div>
+          <div class="users-stat-value" id="us-active">0</div>
+          <div class="users-stat-label">Actifs</div>
+        </div>
+      </div>
+      <div class="users-stat">
+        <div class="users-stat-icon" style="background:rgba(245,158,11,0.1);color:var(--warning);"><i class="fas fa-clock"></i></div>
+        <div>
+          <div class="users-stat-value" id="us-pending">0</div>
+          <div class="users-stat-label">En attente</div>
+        </div>
+      </div>
+      <div class="users-stat">
+        <div class="users-stat-icon" style="background:rgba(139,92,246,0.1);color:#7c3aed;"><i class="fas fa-user-shield"></i></div>
+        <div>
+          <div class="users-stat-value" id="us-admins">0</div>
+          <div class="users-stat-label">Admins</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Header -->
+    <div class="users-header">
+      <div class="users-header-info">
+        <h3><i class="fas fa-user-shield" style="color:var(--primary);margin-right:8px;"></i> Équipe & accès</h3>
+        <p>Gérez les utilisateurs et leurs permissions</p>
       </div>
       <button id="open-invite-modal" class="btn-primary">
         <i class="fas fa-user-plus"></i> Inviter un utilisateur
       </button>
-    </header>
+    </div>
 
-    <section class="users-section">
-      <div class="card table-card">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Utilisateur</th>
-              <th>Rôle</th>
-              <th>Statut</th>
-              <th>Action</th>
-            </tr>
-          </thead>
-          <tbody id="users-table-body">
-            <!-- Rempli par JS -->
-          </tbody>
-        </table>
-      </div>
-    </section>
+    <!-- Table -->
+    <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th><i class="fas fa-user" style="margin-right:6px;color:var(--gray-400);"></i> Utilisateur</th>
+            <th><i class="fas fa-shield-alt" style="margin-right:6px;color:var(--gray-400);"></i> Rôle</th>
+            <th><i class="fas fa-circle-check" style="margin-right:6px;color:var(--gray-400);"></i> Statut</th>
+            <th><i class="fas fa-calendar" style="margin-right:6px;color:var(--gray-400);"></i> Inscrit le</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="users-table-body"></tbody>
+      </table>
+    </div>
+  </main>
 
-    <!-- Modal Invitation -->
-    <div id="invite-modal" class="modal">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h2>Inviter un utilisateur</h2>
-          <button class="close-modal">&times;</button>
+  <!-- Modal Invitation -->
+  <div id="invite-modal" class="modal">
+    <div class="modal-content modal-contact" style="max-width:500px;">
+      <span class="modal-close" id="close-invite-modal"><i class="fas fa-times"></i></span>
+
+      <!-- Step 1: Form -->
+      <div id="invite-step-form">
+        <div class="modal-header" style="border-bottom:none;margin-bottom:20px;padding-bottom:16px;">
+          <div class="modal-header-icon"><i class="fas fa-user-plus"></i></div>
+          <div>
+            <h2>Inviter un utilisateur</h2>
+            <p class="modal-subtitle">Un email d'invitation sera envoyé avec un lien d'activation</p>
+          </div>
         </div>
+
         <form id="invite-form">
-          <div class="form-group">
-            <label for="invite-username">Nom d'utilisateur</label>
-            <input type="text" id="invite-username" placeholder="ex: jean.dupont" required />
+          <div class="modal-section">
+            <div class="modal-section-title"><i class="fas fa-user"></i> Identité</div>
+            <div class="form-grid">
+              <div class="input-group">
+                <i class="fas fa-user"></i>
+                <input type="text" id="invite-username" placeholder="Nom d'utilisateur *" required />
+              </div>
+              <div class="input-group">
+                <i class="fas fa-envelope"></i>
+                <input type="email" id="invite-email" placeholder="Email *" required />
+              </div>
+            </div>
           </div>
-          <div class="form-group">
-            <label for="invite-email">Email</label>
-            <input type="email" id="invite-email" placeholder="jean@example.com" required />
+
+          <div class="modal-section">
+            <div class="modal-section-title"><i class="fas fa-shield-alt"></i> Permissions</div>
+            <div class="form-grid">
+              <div class="input-group">
+                <i class="fas fa-tag"></i>
+                <select id="invite-role">
+                  <option value="user">Utilisateur</option>
+                  <option value="admin">Administrateur</option>
+                </select>
+              </div>
+            </div>
           </div>
-          <div class="modal-footer">
-            <button type="button" class="btn-secondary close-modal">Annuler</button>
-            <button type="submit" class="btn-primary">Envoyer l'invitation</button>
+
+          <div class="form-actions">
+            <button type="button" class="btn-secondary" id="cancel-invite"><i class="fas fa-times"></i> Annuler</button>
+            <button type="submit" class="btn-primary" id="invite-submit-btn"><i class="fas fa-paper-plane"></i> Envoyer l'invitation</button>
           </div>
         </form>
       </div>
+
+      <!-- Step 2: Success -->
+      <div id="invite-step-success" style="display:none;">
+        <div class="invite-success">
+          <div class="invite-success-icon"><i class="fas fa-check"></i></div>
+          <h3 id="invite-success-title">Invitation envoyée !</h3>
+          <p id="invite-success-message">L'utilisateur recevra un email avec un lien d'activation.</p>
+          <div class="invite-link-box" id="invite-link-container" style="display:none;">
+            <i class="fas fa-link" style="color:var(--gray-400);"></i>
+            <input type="text" id="invite-link-input" readonly />
+            <button type="button" class="btn-copy" id="copy-invite-link"><i class="fas fa-copy"></i> Copier</button>
+          </div>
+          <div style="margin-top:20px;">
+            <button type="button" class="btn-primary" id="invite-another"><i class="fas fa-plus"></i> Inviter un autre</button>
+            <button type="button" class="btn-secondary" id="invite-done" style="margin-left:8px;"><i class="fas fa-check"></i> Terminé</button>
+          </div>
+        </div>
+      </div>
     </div>
-  </main>
+  </div>
+
   <script src="shared.js"></script>
   <script src="users.js"></script>
 </body>

@@ -9,6 +9,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <link rel="stylesheet" href="style.css" />
+  <script>
+    const saved = localStorage.getItem('crm-theme');
+    if (saved) document.documentElement.setAttribute('data-theme', saved);
+    else if (window.matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.setAttribute('data-theme', 'dark');
+  </script>
 </head>
 <body>
   <main class="main-content">
@@ -32,7 +37,7 @@
         <i class="fas fa-hand-holding-heart"></i>
         <div>
           <span class="contacts-summary-value" id="count-benevoles">0</span>
-          <span class="contacts-summary-label">benevoles</span>
+          <span class="contacts-summary-label">bénévoles</span>
         </div>
       </div>
       <div class="contacts-summary-item">
@@ -44,6 +49,16 @@
       </div>
     </div>
 
+    <!-- Bulk actions bar -->
+    <div id="bulk-bar" class="bulk-bar">
+      <span id="bulk-count" class="bulk-count">0 sélectionnés</span>
+      <div class="bulk-actions">
+        <button id="bulk-export-btn" class="btn-secondary" style="padding:7px 16px;font-size:0.8rem;"><i class="fas fa-download"></i> Exporter</button>
+        <button id="bulk-delete-btn" class="btn-danger" style="padding:7px 16px;font-size:0.8rem;border-radius:8px;font-weight:600;font-family:inherit;display:inline-flex;align-items:center;gap:6px;cursor:pointer;"><i class="fas fa-trash"></i> Supprimer</button>
+        <button id="bulk-deselect-btn" class="btn-secondary" style="padding:7px 16px;font-size:0.8rem;"><i class="fas fa-times"></i> Désélectionner</button>
+      </div>
+    </div>
+
     <!-- Toolbar -->
     <div class="contacts-toolbar">
       <div class="contacts-toolbar-left">
@@ -52,13 +67,13 @@
       <div class="contacts-toolbar-right">
         <div class="search-bar search-bar-lg">
           <i class="fas fa-search"></i>
-          <input type="text" id="search-contacts" placeholder="Rechercher par nom, email, telephone..." />
+          <input type="text" id="search-contacts" placeholder="Rechercher par nom, email, téléphone..." />
           <kbd class="search-kbd">/</kbd>
         </div>
         <select id="status-filter" class="filter-select">
           <option value="">Tous les statuts</option>
           <option value="Membre">Membre</option>
-          <option value="Benevole">Benevole</option>
+          <option value="Benevole">Bénévole</option>
           <option value="Bureau">Bureau</option>
           <option value="Supporter">Supporter</option>
           <option value="Autre">Autre</option>
@@ -70,15 +85,16 @@
     <div class="table-wrapper contacts-table">
       <table>
         <thead><tr>
-          <th><i class="fas fa-user"></i> Contact</th>
-          <th><i class="fas fa-phone"></i> Telephone</th>
-          <th><i class="fas fa-envelope"></i> Email</th>
-          <th><i class="fas fa-bookmark"></i> Statut</th>
+          <th class="checkbox-cell"><input type="checkbox" id="select-all-checkbox" class="row-checkbox" /></th>
+          <th class="sortable" data-sort="prenom"><i class="fas fa-user"></i> Contact <i class="fas fa-sort sort-icon"></i></th>
+          <th class="sortable" data-sort="telephone"><i class="fas fa-phone"></i> Téléphone <i class="fas fa-sort sort-icon"></i></th>
+          <th class="sortable" data-sort="email"><i class="fas fa-envelope"></i> Email <i class="fas fa-sort sort-icon"></i></th>
+          <th class="sortable" data-sort="statut"><i class="fas fa-bookmark"></i> Statut <i class="fas fa-sort sort-icon"></i></th>
           <th><i class="fas fa-tags"></i> Tags</th>
           <th>Actions</th>
         </tr></thead>
         <tbody id="contacts-body">
-          <tr class="empty-row"><td colspan="6">
+          <tr class="empty-row"><td colspan="7">
             <div class="empty-state">
               <div class="empty-state-icon"><i class="fas fa-users"></i></div>
               <h4>Aucun contact</h4>
@@ -89,9 +105,9 @@
       </table>
     </div>
 
-    <!-- Compteur resultats -->
+    <!-- Footer + Pagination -->
     <div class="contacts-footer">
-      <span id="results-count"><i class="fas fa-filter"></i> 0 resultats</span>
+      <span id="results-count"><i class="fas fa-filter"></i> 0 résultats</span>
     </div>
   </main>
 
@@ -109,16 +125,16 @@
       <form id="contact-form">
         <input type="hidden" id="edit-id" />
         <div class="modal-section">
-          <div class="modal-section-title"><i class="fas fa-user"></i> Identite</div>
+          <div class="modal-section-title"><i class="fas fa-user"></i> Identité</div>
           <div class="form-grid">
             <div class="input-group"><i class="fas fa-user"></i><input type="text" id="f-nom" placeholder="Nom *" required /></div>
-            <div class="input-group"><i class="fas fa-user-tag"></i><input type="text" id="f-prenom" placeholder="Prenom *" required /></div>
+            <div class="input-group"><i class="fas fa-user-tag"></i><input type="text" id="f-prenom" placeholder="Prénom *" required /></div>
           </div>
         </div>
         <div class="modal-section">
-          <div class="modal-section-title"><i class="fas fa-address-card"></i> Coordonnees</div>
+          <div class="modal-section-title"><i class="fas fa-address-card"></i> Coordonnées</div>
           <div class="form-grid">
-            <div class="input-group"><i class="fas fa-phone"></i><input type="tel" id="f-telephone" placeholder="Telephone *" required /></div>
+            <div class="input-group"><i class="fas fa-phone"></i><input type="tel" id="f-telephone" placeholder="Téléphone *" required /></div>
             <div class="input-group"><i class="fas fa-envelope"></i><input type="email" id="f-email" placeholder="Email" /></div>
             <div class="input-group full-width"><i class="fas fa-map-marker-alt"></i><input type="text" id="f-adresse" placeholder="Adresse" /></div>
           </div>
@@ -129,12 +145,12 @@
             <div class="input-group"><i class="fas fa-calendar-alt"></i><input type="date" id="f-dateNaissance" /></div>
             <div class="input-group"><i class="fas fa-tag"></i>
               <select id="f-statut">
-                <option value="Membre">Membre</option><option value="Benevole">Benevole</option>
+                <option value="Membre">Membre</option><option value="Benevole">Bénévole</option>
                 <option value="Bureau">Bureau</option><option value="Supporter">Supporter</option>
                 <option value="Autre">Autre</option>
               </select>
             </div>
-            <div class="input-group full-width"><i class="fas fa-tags"></i><input type="text" id="f-tags" placeholder="Tags (separes par des virgules)" /></div>
+            <div class="input-group full-width"><i class="fas fa-tags"></i><input type="text" id="f-tags" placeholder="Tags (séparés par des virgules)" /></div>
             <div class="input-group full-width"><i class="fas fa-sticky-note"></i><textarea id="f-notes" placeholder="Notes / Commentaires"></textarea></div>
           </div>
         </div>
