@@ -3606,4 +3606,12 @@ th.sorted .sort-icon {
   .search-bar-lg { width: 100%; }
   .email-field-inputs { flex-direction: column; align-items: stretch; }
   .email-field-separator { text-align: center; }
+
+  /* Mobile-first : un tableau à 7 colonnes ne devient pas "responsive" en le
+     rétrécissant, il devient illisible. Sous 768px, la vue cartes est la
+     SEULE vue proposée — pas d'option qui ne marche pas plutôt qu'une
+     option dégradée. Le bouton de bascule n'a alors plus lieu d'être. */
+  .contacts-table { display: none !important; }
+  .contacts-grid { display: grid !important; }
+  .view-toggle { display: none; }
 }
