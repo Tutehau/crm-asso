@@ -309,6 +309,7 @@ function renderExposantsTable() {
 
     const tdEntreprise = document.createElement('td');
     tdEntreprise.innerHTML = `<span class="contact-fullname">${escHtml(x.entreprise)}</span>`;
+    if (x.typeActivite) tdEntreprise.innerHTML += ` <span class="tag-badge tag-badge-5">${escHtml(x.typeActivite)}</span>`;
     if (x.activite) tdEntreprise.innerHTML += `<br><span class="contact-address">${escHtml(x.activite)}</span>`;
 
     const tdContact = document.createElement('td');
@@ -408,6 +409,7 @@ function renderExposantsGrid() {
       <span class="phone-display"><i class="fas fa-phone"></i> ${escHtml(x.telephone)}</span>
       ${x.email ? `<span class="email-display"><i class="fas fa-envelope"></i> ${escHtml(x.email)}</span>` : ''}
       <span class="phone-display"><i class="fas fa-calendar"></i> ${escHtml(eventName(x.eventId))}</span>
+      ${x.typeActivite ? `<span class="tag-badge tag-badge-5">${escHtml(x.typeActivite)}</span>` : ''}
     `;
 
     const actions = document.createElement('div');

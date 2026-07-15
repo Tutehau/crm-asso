@@ -3,15 +3,13 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>Inscription exposant</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-  <link rel="stylesheet" href="style.css" />
-  <meta name="theme-color" content="#0e7490" />
+  <title>Devenir exposant</title>
+  <meta name="description" content="Commerçants et artisans, rejoignez nos événements en tant qu'exposant." />
+  <meta name="theme-color" content="#00c2cb" />
   <link rel="icon" href="icons/favicon-32.png" />
   <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="exposant-inscription.css" />
   <script>
     const saved = localStorage.getItem('crm-theme');
     if (saved) document.documentElement.setAttribute('data-theme', saved);
@@ -19,60 +17,143 @@
   </script>
 </head>
 <body>
-  <div class="public-page">
-    <div class="public-card">
-      <div class="public-brand">
-        <i class="fas fa-store"></i>
-        <span>Inscription exposant</span>
-      </div>
+  <a class="skip-link" href="#main-content">Aller au contenu</a>
 
-      <!-- Sélection d'événement (si plusieurs événements ouverts) -->
-      <div id="event-picker" style="display:none;">
-        <p class="public-lead">Choisissez l'événement auquel vous souhaitez vous inscrire :</p>
-        <div id="event-picker-list" class="event-picker-list"></div>
-      </div>
-
-      <!-- Aucun événement ouvert -->
-      <div id="no-events" style="display:none;">
-        <div class="empty-state">
-          <div class="empty-state-icon"><i class="fas fa-calendar-xmark"></i></div>
-          <h4>Aucune inscription ouverte</h4>
-          <p>Il n'y a pas d'événement acceptant des exposants pour le moment. Revenez bientôt !</p>
-        </div>
-      </div>
-
-      <!-- Formulaire d'inscription -->
-      <div id="registration-form-wrap" style="display:none;">
-        <div id="event-summary" class="event-summary"></div>
-        <form id="registration-form">
-          <div class="modal-section">
-            <div class="form-grid">
-              <div class="input-group full-width"><i class="fas fa-store"></i><input type="text" id="f-entreprise" placeholder="Nom de l'entreprise / stand *" required /></div>
-              <div class="input-group"><i class="fas fa-user"></i><input type="text" id="f-contact" placeholder="Nom du contact *" required /></div>
-              <div class="input-group"><i class="fas fa-phone"></i><input type="tel" id="f-telephone" placeholder="Téléphone *" required /></div>
-              <div class="input-group full-width"><i class="fas fa-envelope"></i><input type="email" id="f-email" placeholder="Email" /></div>
-              <div class="input-group full-width"><i class="fas fa-align-left"></i><textarea id="f-activite" placeholder="Décrivez votre activité / ce que vous proposerez"></textarea></div>
-            </div>
-          </div>
-          <div id="registration-error" class="message error" style="display:none;"></div>
-          <div class="form-actions">
-            <button type="submit" id="registration-submit" class="btn-primary" style="width:100%;justify-content:center;"><i class="fas fa-paper-plane"></i> Envoyer ma demande</button>
-          </div>
-        </form>
-      </div>
-
-      <!-- Confirmation -->
-      <div id="registration-success" style="display:none;">
-        <div class="empty-state">
-          <div class="empty-state-icon" style="background:var(--success-light);"><i class="fas fa-check" style="color:var(--success);"></i></div>
-          <h4>Demande envoyée !</h4>
-          <p>Votre inscription a été transmise à l'organisation. Vous serez contacté(e) pour la confirmation.</p>
-        </div>
+  <header class="hero" aria-label="Devenir exposant">
+    <div class="container hero-content">
+      <p class="tag">Commerçants &amp; artisans</p>
+      <h1 class="hero-h1">Devenez <span class="accent">exposant</span></h1>
+      <p class="hero-sub" id="hero-sub">Présentez vos créations, produits et savoir-faire lors de nos événements. Rejoignez une expérience festive et authentique.</p>
+      <div class="hero-actions">
+        <a href="#exposant-form" class="btn btn-cyan btn-lg">Je souhaite exposer</a>
+        <a href="#avantages" class="btn btn-outline btn-lg">En savoir plus ↓</a>
       </div>
     </div>
-  </div>
+  </header>
 
-  <script src="shared.js"></script>
+  <main id="main-content">
+    <section class="section section--white" id="avantages" aria-labelledby="avantages-title">
+      <div class="container">
+        <div class="section-header section-header--center">
+          <p class="tag">Pourquoi exposer avec nous ?</p>
+          <h2 id="avantages-title">Les avantages d'être <strong>exposant</strong></h2>
+          <p>Nos événements réunissent un public nombreux et engagé. Une vitrine idéale pour votre activité.</p>
+        </div>
+        <div class="benefits-grid">
+          <div class="benefit-card">
+            <div class="benefit-icon"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+            <h3 class="benefit-title">Large public</h3>
+            <p class="benefit-desc">Nos événements accueillent de nombreux visiteurs : une occasion unique de toucher un nouveau public local.</p>
+          </div>
+          <div class="benefit-card">
+            <div class="benefit-icon"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
+            <h3 class="benefit-title">Cadre festif &amp; authentique</h3>
+            <p class="benefit-desc">Exposez dans une atmosphère chaleureuse et colorée, en harmonie avec nos spectacles et animations.</p>
+          </div>
+          <div class="benefit-card">
+            <div class="benefit-icon"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2M12 12v5M9.5 14.5h5"/></svg></div>
+            <h3 class="benefit-title">Visibilité locale</h3>
+            <p class="benefit-desc">Profitez de notre communication sur les réseaux sociaux pour promouvoir votre présence avant l'événement.</p>
+          </div>
+          <div class="benefit-card">
+            <div class="benefit-icon"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20M4 4.5A2.5 2.5 0 0 1 6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15z"/></svg></div>
+            <h3 class="benefit-title">Artisanat &amp; créations bienvenus</h3>
+            <p class="benefit-desc">Bijoux, textiles, art, produits locaux, food… Tous les savoir-faire ont leur place chez nous.</p>
+          </div>
+          <div class="benefit-card">
+            <div class="benefit-icon"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+            <h3 class="benefit-title">Accompagnement bienveillant</h3>
+            <p class="benefit-desc">Notre équipe reste disponible avant et pendant l'événement pour que tout se passe bien.</p>
+          </div>
+          <div class="benefit-card">
+            <div class="benefit-icon"><svg aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg></div>
+            <h3 class="benefit-title">Esprit communautaire</h3>
+            <p class="benefit-desc">Rejoignez un réseau de commerçants et d'artisans engagés qui partagent des valeurs de partage et de convivialité.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="exposant-form" aria-labelledby="form-title">
+      <div class="container container--narrow">
+        <div class="section-header section-header--center">
+          <p class="tag">Candidature</p>
+          <h2 id="form-title">Déposez votre <strong>candidature</strong></h2>
+          <p>Remplissez ce formulaire, notre équipe vous recontactera pour convenir des modalités de participation.</p>
+        </div>
+
+        <!-- Sélection d'événement (si plusieurs sont ouverts) -->
+        <div id="event-picker" class="form-card" style="display:none;">
+          <p class="form-label" style="margin-bottom:14px;font-size:15px;">Choisissez l'événement auquel vous souhaitez vous inscrire :</p>
+          <div id="event-picker-list" class="event-picker-list"></div>
+        </div>
+
+        <!-- Aucun événement ouvert -->
+        <div id="no-events" class="form-card" style="display:none;text-align:center;">
+          <div class="state-icon"><i class="fas fa-calendar-xmark"></i></div>
+          <p class="state-title">Aucune inscription ouverte</p>
+          <p class="state-text">Il n'y a pas d'événement acceptant des exposants pour le moment. Revenez bientôt !</p>
+        </div>
+
+        <!-- Formulaire -->
+        <div id="registration-form-wrap" class="form-card" style="display:none;">
+          <div id="event-summary" class="event-summary"></div>
+          <form id="registration-form" novalidate>
+            <div class="form-group">
+              <label class="form-label" for="f-entreprise">Nom de l'entreprise / enseigne *</label>
+              <input class="form-input" type="text" id="f-entreprise" required placeholder="Votre raison sociale ou nom d'enseigne" />
+            </div>
+            <div class="form-grid-2">
+              <div class="form-group">
+                <label class="form-label" for="f-contact">Nom &amp; prénom du contact *</label>
+                <input class="form-input" type="text" id="f-contact" required placeholder="Votre nom complet" />
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="f-telephone">Téléphone *</label>
+                <input class="form-input" type="tel" id="f-telephone" required placeholder="87 XX XX XX" />
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="f-email">Email</label>
+              <input class="form-input" type="email" id="f-email" placeholder="votre@email.pf" />
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="f-type">Type d'activité</label>
+              <select class="form-input form-select" id="f-type">
+                <option value="">Choisir une catégorie…</option>
+                <option value="Artisan / Créateur">Artisan / Créateur</option>
+                <option value="Commerçant">Commerçant</option>
+                <option value="Restaurateur / Snacking">Restaurateur / Snacking</option>
+                <option value="Producteur local">Producteur local</option>
+                <option value="Association">Association</option>
+                <option value="Autre">Autre</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="f-activite">Description de vos produits / services *</label>
+              <textarea class="form-textarea" id="f-activite" required placeholder="Décrivez ce que vous souhaitez proposer : type de produits, stand envisagé, besoins particuliers (électricité, surface, etc.)…"></textarea>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="f-message">Questions / remarques (facultatif)</label>
+              <textarea class="form-textarea" id="f-message" style="min-height:80px;" placeholder="Toute question ou précision supplémentaire…"></textarea>
+            </div>
+            <div id="registration-error" class="form-message error"></div>
+            <button type="submit" id="registration-submit" class="btn btn-cyan btn-lg" style="width:100%;margin-top:8px;">Envoyer ma candidature →</button>
+          </form>
+        </div>
+
+        <!-- Confirmation -->
+        <div id="registration-success" class="form-card" style="display:none;text-align:center;">
+          <div class="state-icon success"><i class="fas fa-check"></i></div>
+          <p class="state-title">Candidature envoyée !</p>
+          <p class="state-text">Votre demande a été transmise à l'organisation. Vous serez contacté(e) pour la confirmation.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="tf-footer" id="tf-footer">© <span id="footer-year"></span></footer>
+
   <script src="exposant-inscription.js"></script>
 </body>
 </html>

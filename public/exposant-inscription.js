@@ -1,3 +1,10 @@
+// Page publique autonome : pas de shared.js (pas de session, pas de sidebar),
+// donc son propre petit utilitaire d'échappement HTML.
+function escHtml(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
 let openEvents = [];
 let selectedEvent = null;
 
@@ -10,14 +17,31 @@ const form = document.getElementById('registration-form');
 const errorBox = document.getElementById('registration-error');
 const submitBtn = document.getElementById('registration-submit');
 const successBox = document.getElementById('registration-success');
+const heroSub = document.getElementById('hero-sub');
+const footerYear = document.getElementById('footer-year');
 
 const fEntreprise = document.getElementById('f-entreprise');
 const fContact = document.getElementById('f-contact');
 const fTelephone = document.getElementById('f-telephone');
 const fEmail = document.getElementById('f-email');
+const fType = document.getElementById('f-type');
 const fActivite = document.getElementById('f-activite');
+const fMessage = document.getElementById('f-message');
+
+footerYear.textContent = new Date().getFullYear();
 
 (async () => {
+  try {
+    const brandingRes = await fetch('/api/public/branding');
+    if (brandingRes.ok) {
+      const branding = await brandingRes.json();
+      if (branding.assoName) {
+        heroSub.textContent = `Présentez vos créations, produits et savoir-faire lors des événements de ${branding.assoName}. Rejoignez une expérience festive et authentique.`;
+        footerYear.textContent = `${new Date().getFullYear()} ${branding.assoName}`;
+      }
+    }
+  } catch {}
+
   try {
     const res = await fetch('/api/public/events');
     if (!res.ok) throw new Error();
@@ -91,11 +115,13 @@ form.addEventListener('submit', async (e) => {
     contactNom: fContact.value.trim(),
     telephone: fTelephone.value.trim(),
     email: fEmail.value.trim(),
-    activite: fActivite.value.trim()
+    typeActivite: fType.value,
+    activite: fActivite.value.trim(),
+    message: fMessage.value.trim()
   };
 
-  if (!data.entreprise || !data.contactNom || !data.telephone) {
-    errorBox.textContent = 'Le nom de l\'entreprise, le contact et le téléphone sont obligatoires.';
+  if (!data.entreprise || !data.contactNom || !data.telephone || !data.activite) {
+    errorBox.textContent = 'L\'entreprise, le contact, le téléphone et la description sont obligatoires.';
     errorBox.style.display = '';
     return;
   }
@@ -114,10 +140,11 @@ form.addEventListener('submit', async (e) => {
 
     formWrap.style.display = 'none';
     successBox.style.display = '';
+    successBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
   } catch (err) {
     errorBox.textContent = err.message || 'Une erreur est survenue, veuillez réessayer.';
     errorBox.style.display = '';
     submitBtn.disabled = false;
-    submitBtn.innerHTML = '<i class="fas fa-paper-plane"></i> Envoyer ma demande';
+    submitBtn.innerHTML = 'Envoyer ma candidature →';
   }
 });

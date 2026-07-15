@@ -1,0 +1,225 @@
+/* ============================================================
+   exposant-inscription.css — page publique autonome
+   ============================================================
+   Palette et système repris fidèlement du site public de
+   l'association (tahiti-farani.fr : --cyan #00c2cb, pile de police
+   système façon SF Pro, pilules, cartes douces) plutôt que du thème
+   interne du CRM (--primary teal) : cette page est vue par des
+   commerçants/artisans externes qui arrivent depuis le site vitrine
+   de l'association, elle doit prolonger son identité, pas celle de
+   l'outil d'administration.
+   ============================================================ */
+:root {
+  --cyan: #00c2cb;
+  --cyan-dark: #009ca6;
+  --cyan-light: #00d8e2;
+  --cyan-soft: rgba(0, 194, 203, 0.1);
+  --cyan-soft2: rgba(0, 194, 203, 0.15);
+
+  --bg: #f5f5f7;
+  --bg-white: #ffffff;
+  --text: #1d1d1f;
+  --text-muted: #86868b;
+  --text-secondary: #515154;
+  --border: #e5e5e7;
+
+  --shadow: 0 4px 12px rgba(0,0,0,0.06), 0 2px 4px rgba(0,0,0,0.04);
+  --shadow-lg: 0 20px 40px rgba(0,0,0,0.08), 0 8px 16px rgba(0,0,0,0.04);
+
+  --r: 14px;
+  --r-lg: 22px;
+  --r-xl: 28px;
+  --r-full: 9999px;
+
+  --section-py: clamp(56px, 8vw, 100px);
+  --container-px: clamp(16px, 5vw, 48px);
+}
+[data-theme="dark"] {
+  --bg: #0c0c0e;
+  --bg-white: #18181b;
+  --text: #f5f5f7;
+  --text-muted: #8c8c96;
+  --text-secondary: #d4d4d8;
+  --border: #2d2d30;
+}
+
+/* ----- Fondations mobile-first ----- */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+html, body { overflow-x: hidden; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+input, textarea, select { font-size: 16px; font-family: inherit; }
+button { cursor: pointer; border: none; background: none; font-family: inherit; }
+a { color: inherit; }
+
+.skip-link {
+  position: absolute; left: -9999px; top: 4px; z-index: 9999;
+  background: var(--cyan); color: #fff; padding: 8px 16px;
+  border-radius: 10px; font-weight: 700; text-decoration: none;
+}
+.skip-link:focus { left: 4px; }
+
+.container { max-width: 1100px; margin: 0 auto; padding: 0 var(--container-px); width: 100%; }
+.container--narrow { max-width: 720px; }
+
+.section { padding: var(--section-py) 0; }
+.section--white { background: var(--bg-white); }
+
+.tag {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.2em;
+  text-transform: uppercase; color: var(--cyan); margin-bottom: 1rem;
+}
+
+h1, h2 { font-weight: 900; letter-spacing: -0.02em; line-height: 1.08; }
+.accent { color: var(--cyan); }
+
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 14px 26px; border-radius: var(--r-full);
+  font-size: 15px; font-weight: 700; letter-spacing: 0.01em;
+  transition: all 0.2s ease; text-decoration: none;
+}
+.btn-lg { padding: 16px 32px; font-size: 16px; }
+.btn-cyan { background: var(--cyan); color: #fff; }
+.btn-cyan:hover { background: var(--cyan-dark); transform: translateY(-1px); box-shadow: 0 8px 24px rgba(0,194,203,0.35); }
+.btn-cyan:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+.btn-outline { background: transparent; color: #fff; border: 1.5px solid rgba(255,255,255,0.35); }
+.btn-outline:hover { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.6); }
+
+/* ----- Hero ----- */
+.hero {
+  position: relative;
+  min-height: 62svh;
+  display: flex; align-items: center;
+  background: linear-gradient(160deg, #04141a 0%, #0b2e38 45%, var(--cyan-dark) 100%);
+  padding: 100px 0 64px;
+  text-align: center;
+}
+.hero-content { position: relative; z-index: 2; display: flex; flex-direction: column; align-items: center; }
+.hero-h1 {
+  font-size: clamp(2.4rem, 9vw, 5rem);
+  color: #fff;
+  margin-bottom: 1.25rem;
+}
+.hero-sub {
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  color: rgba(255,255,255,0.72);
+  max-width: 560px;
+  margin: 0 auto 2rem;
+}
+.hero-actions { display: flex; flex-wrap: wrap; gap: 12px; justify-content: center; }
+
+/* ----- Avantages ----- */
+.section-header { margin-bottom: clamp(32px, 5vw, 52px); max-width: 640px; }
+.section-header--center { text-align: center; margin-left: auto; margin-right: auto; }
+.section-header h2 { font-size: clamp(1.7rem, 4.5vw, 2.6rem); margin-bottom: 12px; }
+.section-header p { font-size: 1.02rem; color: var(--text-secondary); line-height: 1.7; }
+
+.benefits-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 18px;
+  margin-top: 36px;
+}
+.benefit-card {
+  background: var(--bg-white);
+  border-radius: var(--r-lg);
+  padding: 26px 22px;
+  border: 1px solid var(--border);
+  text-align: center;
+}
+.benefit-icon {
+  width: 50px; height: 50px; border-radius: var(--r);
+  background: var(--cyan-soft); color: var(--cyan);
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 18px;
+}
+.benefit-icon svg { width: 24px; height: 24px; }
+.benefit-title { font-size: 0.98rem; font-weight: 800; margin-bottom: 6px; }
+.benefit-desc { font-size: 13.5px; color: var(--text-secondary); line-height: 1.6; }
+
+/* ----- Formulaire ----- */
+.form-card {
+  background: var(--bg-white);
+  border-radius: var(--r-xl);
+  padding: clamp(22px, 4vw, 44px);
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border);
+}
+.form-group { margin-bottom: 18px; }
+.form-grid-2 { display: grid; grid-template-columns: 1fr; gap: 0 16px; }
+.form-label {
+  display: block; font-size: 13px; font-weight: 600;
+  color: var(--text-secondary); margin-bottom: 7px; letter-spacing: 0.02em;
+}
+.form-input, .form-textarea, .form-select {
+  width: 100%; padding: 13px 16px; border: 1.5px solid var(--border);
+  border-radius: var(--r); color: var(--text); background: var(--bg-white);
+  transition: border-color 0.15s, box-shadow 0.15s; outline: none;
+}
+.form-input:focus, .form-textarea:focus, .form-select:focus {
+  border-color: var(--cyan); box-shadow: 0 0 0 3px var(--cyan-soft);
+}
+.form-textarea { min-height: 110px; resize: vertical; }
+
+.event-summary {
+  padding: 16px 18px;
+  border-radius: var(--r);
+  background: var(--cyan-soft);
+  border: 1px solid var(--cyan-light);
+  margin-bottom: 22px;
+}
+.event-summary strong { display: block; font-size: 1rem; margin-bottom: 4px; }
+.event-summary span { font-size: 0.82rem; color: var(--text-secondary); display: block; }
+
+.event-picker-list { display: flex; flex-direction: column; gap: 10px; }
+.event-picker-item {
+  display: flex; flex-direction: column; gap: 4px;
+  padding: 16px 18px; border: 1.5px solid var(--border); border-radius: var(--r);
+  background: var(--bg); cursor: pointer; transition: all 0.15s ease;
+  text-align: left; width: 100%;
+}
+.event-picker-item:hover { border-color: var(--cyan); background: var(--cyan-soft); }
+.event-picker-item strong { font-size: 0.95rem; }
+.event-picker-item span { font-size: 0.78rem; color: var(--text-muted); }
+
+.form-message {
+  display: none; padding: 12px 16px; border-radius: 8px;
+  font-size: 14px; font-weight: 600; margin-bottom: 14px;
+}
+.form-message.error { display: block; background: #fdecea; color: #b3261e; border: 1px solid #f6c8c4; }
+[data-theme="dark"] .form-message.error { background: rgba(248,113,113,0.12); color: #f87171; border-color: rgba(248,113,113,0.3); }
+
+.state-icon {
+  width: 60px; height: 60px; margin: 0 auto 18px;
+  border-radius: 50%; background: var(--cyan-soft); color: var(--cyan);
+  display: flex; align-items: center; justify-content: center; font-size: 1.4rem;
+}
+.state-icon.success { background: rgba(16,185,129,0.12); color: #10b981; }
+.state-title { font-size: 1.1rem; font-weight: 800; margin-bottom: 8px; }
+.state-text { font-size: 0.92rem; color: var(--text-secondary); max-width: 420px; margin: 0 auto; }
+
+.tf-footer {
+  text-align: center;
+  padding: 28px 16px calc(28px + env(safe-area-inset-bottom, 0px));
+  font-size: 0.78rem;
+  color: var(--text-muted);
+}
+
+/* ----- Progressive enhancement (mobile-first : le mobile est la base) ----- */
+@media (min-width: 640px) {
+  .benefits-grid { grid-template-columns: 1fr 1fr; }
+  .form-grid-2 { grid-template-columns: 1fr 1fr; }
+}
+@media (min-width: 1024px) {
+  .benefits-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .btn { transition: none; }
+}

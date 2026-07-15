@@ -472,6 +472,12 @@ app.delete('/api/events/:id', isAuth, async (req, res) => {
   res.json({ message: 'Événement supprimé' });
 });
 
+// -- Identité publique (nom de l'association, pour habiller la page d'inscription) --
+app.get('/api/public/branding', async (req, res) => {
+  const settings = await readJSON(SETTINGS_FILE);
+  res.json({ assoName: settings.assoName || '' });
+});
+
 // -- Événements ouverts (public, pour la page d'inscription exposants) --
 app.get('/api/public/events', async (req, res) => {
   const events = await readJSON(EVENTS_FILE);
@@ -483,7 +489,7 @@ app.get('/api/public/events', async (req, res) => {
 
 // -- Inscriptions exposants (public) --
 app.post('/api/public/exposants', async (req, res) => {
-  const { eventId, entreprise, contactNom, email, telephone, activite } = req.body;
+  const { eventId, entreprise, contactNom, email, telephone, activite, typeActivite, message } = req.body;
   if (!eventId || !entreprise || !contactNom || !telephone) {
     return res.status(400).json({ message: 'Événement, entreprise, contact et téléphone sont obligatoires' });
   }
@@ -510,7 +516,9 @@ app.post('/api/public/exposants', async (req, res) => {
     contactNom,
     email: email || '',
     telephone,
+    typeActivite: typeActivite || '',
     activite: activite || '',
+    message: message || '',
     statut: 'en_attente',
     createdAt: new Date().toISOString()
   };
