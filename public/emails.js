@@ -100,6 +100,26 @@ const templates = {
   </div>
 </div>`
   },
+  exposants: {
+    subject: '🏪 Devenez exposant à [NOM DE L\'ÉVÉNEMENT] !',
+    body: `<div style="font-family: sans-serif; line-height: 1.6; color: #333; max-width: 600px;">
+  <h2 style="color: #0e7490;">🏪 Vous êtes commerçant ou artisan ?</h2>
+  <p>Bonjour,</p>
+  <p>Nous serions ravis de vous accueillir en tant qu'exposant lors de notre prochain événement :</p>
+  <div style="background: linear-gradient(135deg, #e6fbfc, #fff); padding: 20px; border-radius: 12px; border: 1px solid #a8ebee; margin: 20px 0; text-align: center;">
+    <h3 style="color: #0e7490; margin-bottom: 12px;">[NOM DE L'ÉVÉNEMENT]</h3>
+    <p>📅 <strong>[DATE]</strong></p>
+    <p>📍 <strong>[LIEU]</strong></p>
+  </div>
+  <p>Présentez vos créations, produits et savoir-faire dans un cadre festif et convivial, devant un large public.</p>
+  <p style="text-align: center;">
+    <a href="[LIEN_INSCRIPTION]" style="display: inline-block; padding: 12px 32px; background: #0e7490; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">Je m'inscris comme exposant</a>
+  </p>
+  <p style="font-size: 0.85em; color: #999;">Le lien d'inscription est disponible dans l'onglet <strong>Exposants</strong> du CRM, bouton « Copier le lien » sur la carte de l'événement.</p>
+  <p>Au plaisir de vous compter parmi nos exposants !</p>
+  <p>Cordialement,<br><strong>L'équipe organisatrice</strong></p>
+</div>`
+  },
   thankyou: {
     subject: '🙏 Merci pour votre engagement !',
     body: `<div style="font-family: sans-serif; line-height: 1.6; color: #333; max-width: 600px;">
