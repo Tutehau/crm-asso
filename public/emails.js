@@ -57,17 +57,17 @@ const templates = {
   event: {
     subject: '🎉 Invitation : [Nom de l\'événement]',
     body: `<div style="font-family: sans-serif; line-height: 1.6; color: #333; max-width: 600px;">
-  <h2 style="color: #6366f1;">🎉 Vous êtes invité(e) !</h2>
+  <h2 style="color: #0e7490;">🎉 Vous êtes invité(e) !</h2>
   <p>Bonjour,</p>
   <p>Nous avons le plaisir de vous inviter à notre prochain événement :</p>
   <div style="background: linear-gradient(135deg, #f0f0ff, #fff); padding: 20px; border-radius: 12px; border: 1px solid #e0e0ff; margin: 20px 0; text-align: center;">
-    <h3 style="color: #6366f1; margin-bottom: 12px;">[NOM DE L'ÉVÉNEMENT]</h3>
+    <h3 style="color: #0e7490; margin-bottom: 12px;">[NOM DE L'ÉVÉNEMENT]</h3>
     <p>📅 <strong>[DATE]</strong></p>
     <p>📍 <strong>[LIEU]</strong></p>
     <p>🕐 <strong>[HEURE]</strong></p>
   </div>
   <p style="text-align: center;">
-    <a href="#" style="display: inline-block; padding: 12px 32px; background: #6366f1; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">Confirmer ma présence</a>
+    <a href="#" style="display: inline-block; padding: 12px 32px; background: #0e7490; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">Confirmer ma présence</a>
   </p>
   <p>Au plaisir de vous y retrouver !</p>
   <p>Cordialement,<br><strong>L'équipe organisatrice</strong></p>
@@ -81,7 +81,7 @@ const templates = {
     <p style="opacity: 0.8; margin: 8px 0 0;">[Mois Année]</p>
   </div>
   <div style="padding: 24px; border: 1px solid #eee; border-top: none; border-radius: 0 0 12px 12px;">
-    <h2 style="color: #2c3e50; border-bottom: 2px solid #6366f1; padding-bottom: 8px;">📌 À la une</h2>
+    <h2 style="color: #2c3e50; border-bottom: 2px solid #0e7490; padding-bottom: 8px;">📌 À la une</h2>
     <p>[Votre actualité principale ici]</p>
 
     <h2 style="color: #2c3e50; border-bottom: 2px solid #10b981; padding-bottom: 8px;">📅 Agenda</h2>
@@ -306,11 +306,11 @@ function setupFormatToolbar() {
     h1: { before: '<h2 style="color: #2c3e50;">', after: '</h2>', placeholder: 'Titre' },
     p: { before: '<p>', after: '</p>', placeholder: 'Votre texte ici' },
     ul: { before: '<ul>\n  <li>', after: '</li>\n  <li>Élément 2</li>\n</ul>', placeholder: 'Élément 1' },
-    link: { before: '<a href="URL" style="color: #6366f1;">', after: '</a>', placeholder: 'Texte du lien' },
+    link: { before: '<a href="URL" style="color: #0e7490;">', after: '</a>', placeholder: 'Texte du lien' },
     image: { before: '<img src="', after: '" alt="description" style="max-width: 100%; border-radius: 8px;" />', placeholder: 'URL de l\'image' },
     hr: { before: '', after: '<hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;" />', placeholder: '' },
-    color: { before: '<span style="color: #6366f1;">', after: '</span>', placeholder: 'texte coloré' },
-    button: { before: '<a href="URL" style="display: inline-block; padding: 12px 28px; background: #6366f1; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">', after: '</a>', placeholder: 'Texte du bouton' },
+    color: { before: '<span style="color: #0e7490;">', after: '</span>', placeholder: 'texte coloré' },
+    button: { before: '<a href="URL" style="display: inline-block; padding: 12px 28px; background: #0e7490; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">', after: '</a>', placeholder: 'Texte du bouton' },
   };
 
   document.querySelectorAll('.format-btn').forEach(btn => {

@@ -1,11 +1,13 @@
 /* ----- RESET & VARIABLES ----- */
 :root {
-  --sidebar-bg: #0f172a;
+  --sidebar-bg: #0b2027;
   --sidebar-width: 260px;
-  --primary: #6366f1;
-  --primary-dark: #4f46e5;
-  --primary-light: #818cf8;
-  --primary-glow: rgba(99, 102, 241, 0.15);
+  --primary: #0e7490;
+  --primary-dark: #155e75;
+  --primary-light: #22d3ee;
+  --primary-glow: rgba(14, 116, 144, 0.15);
+  --font-display: 'Space Grotesk', 'Inter', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, -apple-system, sans-serif;
   --success: #10b981;
   --success-light: #d1fae5;
   --danger: #ef4444;
@@ -42,11 +44,20 @@ html, body { overflow-x: hidden; }
 html { scroll-padding-top: 16px; }
 
 body {
-  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: var(--font-body);
   background: var(--gray-100);
   color: var(--gray-800);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+/* Police d'affichage distincte pour les titres : repère visuel immédiat
+   entre "titre" et "contenu" sans dépendre uniquement de la taille. */
+h1, h2, h3, h4,
+.brand,
+.stat-info p {
+  font-family: var(--font-display);
+  letter-spacing: -0.01em;
 }
 
 @media (max-width: 768px) {
@@ -57,7 +68,7 @@ body {
 /* ----- LOGIN & SETUP ----- */
 #login-screen, #setup-screen {
   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 40%, #312e81 100%);
+  background: linear-gradient(135deg, #04141a 0%, #0b2e38 45%, #0e7490 100%);
   display: flex; align-items: center; justify-content: center;
   z-index: 9999;
   overflow: hidden;
@@ -67,7 +78,7 @@ body {
   content: '';
   position: absolute;
   width: 600px; height: 600px;
-  background: radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(14, 116, 144, 0.15) 0%, transparent 70%);
   top: -200px; right: -100px;
   border-radius: 50%;
   animation: pulse-glow 6s ease-in-out infinite;
@@ -183,7 +194,7 @@ body {
   background: var(--primary);
   color: white;
   font-weight: 600;
-  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.4);
+  box-shadow: 0 4px 12px rgba(14, 116, 144, 0.4);
 }
 .sidebar nav a.active i { color: white; }
 
@@ -225,6 +236,12 @@ body {
   padding: 8px 16px;
   border-radius: var(--radius-full);
   border: 1px solid var(--gray-200);
+  text-decoration: none;
+  transition: var(--transition);
+}
+.user-info:hover {
+  border-color: var(--primary);
+  color: var(--gray-800);
 }
 .user-info i {
   font-size: 1.2rem;
@@ -678,7 +695,7 @@ tr:last-child td { border-bottom: none; }
 .btn-primary:hover {
   background: var(--primary-dark);
   transform: translateY(-1px);
-  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+  box-shadow: 0 4px 14px rgba(14, 116, 144, 0.35);
 }
 .btn-primary:active {
   transform: translateY(0);
@@ -1332,11 +1349,11 @@ tr:last-child td { border-bottom: none; }
 
 /* ----- DARK MODE ----- */
 [data-theme="dark"] {
-  --sidebar-bg: #0a0f1a;
-  --primary: #818cf8;
-  --primary-dark: #6366f1;
-  --primary-light: #a5b4fc;
-  --primary-glow: rgba(129, 140, 248, 0.15);
+  --sidebar-bg: #060f13;
+  --primary: #22d3ee;
+  --primary-dark: #0e7490;
+  --primary-light: #67e8f9;
+  --primary-glow: rgba(34, 211, 238, 0.15);
   --success: #34d399;
   --success-light: rgba(52, 211, 153, 0.15);
   --danger: #f87171;
@@ -2020,7 +2037,7 @@ tr:last-child td { border-bottom: none; }
 .join-page {
   position: fixed; top: 0; left: 0;
   width: 100%; height: 100%;
-  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 40%, #312e81 100%);
+  background: linear-gradient(135deg, #04141a 0%, #0b2e38 45%, #0e7490 100%);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -2030,7 +2047,7 @@ tr:last-child td { border-bottom: none; }
   content: '';
   position: absolute;
   width: 500px; height: 500px;
-  background: radial-gradient(circle, rgba(99, 102, 241, 0.12) 0%, transparent 70%);
+  background: radial-gradient(circle, rgba(14, 116, 144, 0.12) 0%, transparent 70%);
   top: -150px; right: -100px;
   border-radius: 50%;
   animation: pulse-glow 6s ease-in-out infinite;
@@ -3348,7 +3365,7 @@ th.sorted .sort-icon {
 .btn-send:hover {
   background: var(--primary-dark);
   transform: translateY(-1px);
-  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.35);
+  box-shadow: 0 4px 14px rgba(14, 116, 144, 0.35);
 }
 .btn-send:disabled {
   opacity: 0.6;

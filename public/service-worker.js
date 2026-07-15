@@ -13,7 +13,7 @@
  * Incrémente CACHE_VERSION à chaque déploiement significatif pour
  * forcer le nettoyage de l'ancien cache (voir "activate" ci-dessous).
  */
-const CACHE_VERSION = "crm-asso-cache-v1";
+const CACHE_VERSION = "crm-asso-cache-v2";
 
 const CORE_ASSETS = [
     "./",

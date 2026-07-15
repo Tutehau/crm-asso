@@ -25,7 +25,7 @@ async function loadDashboard() {
         labels: Object.keys(stats.statusCount),
         datasets: [{
           data: Object.values(stats.statusCount),
-          backgroundColor: ['#6366f1', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6']
+          backgroundColor: ['#0e7490', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6']
         }]
       },
       options: { responsive: true, maintainAspectRatio: false }

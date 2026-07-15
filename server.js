@@ -592,7 +592,7 @@ async function sendInviteEmail(transporter, settings, email, username, joinLink)
     to: email,
     subject: `Invitation à rejoindre le CRM — ${assoName}`,
     html: `<div style="font-family: sans-serif; line-height: 1.6; color: #333; max-width: 600px; margin: 0 auto;">
-      <div style="background: linear-gradient(135deg, #0f172a, #312e81); padding: 32px; border-radius: 12px 12px 0 0; text-align: center;">
+      <div style="background: linear-gradient(135deg, #04141a, #0e7490); padding: 32px; border-radius: 12px 12px 0 0; text-align: center;">
         <h1 style="color: white; margin: 0; font-size: 1.4em;">🤝 Invitation</h1>
         <p style="color: rgba(255,255,255,0.7); margin: 8px 0 0;">CRM ${escapeHtml(assoName)}</p>
       </div>
@@ -601,10 +601,10 @@ async function sendInviteEmail(transporter, settings, email, username, joinLink)
         <p>Vous avez été invité(e) à rejoindre la plateforme de gestion de <strong>${escapeHtml(assoName)}</strong>.</p>
         <p>Pour activer votre compte et définir votre mot de passe, cliquez sur le bouton ci-dessous :</p>
         <p style="text-align: center; margin: 28px 0;">
-          <a href="${escapeHtml(joinLink)}" style="display: inline-block; padding: 14px 32px; background: #6366f1; color: white; text-decoration: none; border-radius: 10px; font-weight: 600; font-size: 1em;">Activer mon compte</a>
+          <a href="${escapeHtml(joinLink)}" style="display: inline-block; padding: 14px 32px; background: #0e7490; color: white; text-decoration: none; border-radius: 10px; font-weight: 600; font-size: 1em;">Activer mon compte</a>
         </p>
         <p style="font-size: 0.85em; color: #64748b;">Ou copiez-collez ce lien :<br>
-          <a href="${escapeHtml(joinLink)}" style="color: #6366f1; word-break: break-all;">${escapeHtml(joinLink)}</a>
+          <a href="${escapeHtml(joinLink)}" style="color: #0e7490; word-break: break-all;">${escapeHtml(joinLink)}</a>
         </p>
         <hr style="border: none; border-top: 1px solid #eee; margin: 24px 0;" />
         <p style="font-size: 0.8em; color: #94a3b8; text-align: center;">Si vous n'avez pas demandé cette invitation, ignorez cet email.</p>
