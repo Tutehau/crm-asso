@@ -35,12 +35,23 @@
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
+/* ----- FONDATIONS MOBILE-FIRST -----
+   html + body : les deux sont nécessaires, selon le moteur de rendu c'est l'un ou
+   l'autre qui devient l'élément scrollable réel du document. */
+html, body { overflow-x: hidden; }
+html { scroll-padding-top: 16px; }
+
 body {
   font-family: 'Inter', system-ui, -apple-system, sans-serif;
   background: var(--gray-100);
   color: var(--gray-800);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+@media (max-width: 768px) {
+  /* Sous 16px, iOS Safari zoome automatiquement la page au focus d'un champ. */
+  input, textarea, select { font-size: 16px !important; }
 }
 
 /* ----- LOGIN & SETUP ----- */
@@ -1541,6 +1552,55 @@ tr:last-child td { border-bottom: none; }
   opacity: 1;
 }
 
+/* ----- BOTTOM NAV MOBILE (façon app native) ----- */
+.mobile-bottom-nav {
+  display: none;
+  position: fixed;
+  left: 12px; right: 12px;
+  bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+  z-index: 150;
+  align-items: stretch;
+  justify-content: space-around;
+  gap: 4px;
+  padding: 6px;
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  box-shadow: 0 14px 40px rgba(15, 23, 42, 0.14);
+}
+[data-theme="dark"] .mobile-bottom-nav {
+  background: rgba(15, 23, 42, 0.8);
+  border-color: rgba(255, 255, 255, 0.06);
+  box-shadow: 0 14px 40px rgba(0, 0, 0, 0.35);
+}
+.bottom-nav-tab {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  min-height: 52px;
+  padding: 6px 4px;
+  border: none;
+  background: transparent;
+  color: var(--gray-500);
+  text-decoration: none;
+  border-radius: var(--radius);
+  font-family: inherit;
+  cursor: pointer;
+  transition: var(--transition);
+}
+.bottom-nav-tab i { font-size: 1.1rem; }
+.bottom-nav-tab span { font-size: 0.68rem; font-weight: 600; }
+.bottom-nav-tab.active {
+  color: var(--primary);
+  background: var(--primary-glow);
+}
+[data-theme="dark"] .bottom-nav-tab { color: var(--gray-400); }
+
 /* ----- ANIMATED TOASTS ----- */
 .toast-container {
   position: fixed;
@@ -2384,7 +2444,9 @@ th.sorted .sort-icon {
 
 /* ----- RESPONSIVE ----- */
 @media (max-width: 768px) {
-  .hamburger-btn { display: flex; }
+  /* Le hamburger flottant est remplacé par l'onglet "Plus" de la barre basse
+     (façon app native) : accès direct aux 3 sections clés + tiroir pour le reste. */
+  .mobile-bottom-nav { display: flex; }
   .sidebar {
     transform: translateX(-100%);
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -2394,15 +2456,38 @@ th.sorted .sort-icon {
     transform: translateX(0);
   }
   .sidebar span, .brand span { display: inline; }
-  .main-content { margin-left: 0; padding: 16px; padding-top: 70px; }
+  .main-content {
+    margin-left: 0;
+    padding: 16px;
+    padding-top: 20px;
+    padding-bottom: calc(84px + env(safe-area-inset-bottom, 0px));
+  }
   .stats-grid { grid-template-columns: 1fr 1fr; }
   .charts-row { grid-template-columns: 1fr; }
   .ie-grid { grid-template-columns: 1fr; }
   .form-grid { grid-template-columns: 1fr; }
   .full-width { grid-column: 1; }
   .toolbar { flex-direction: column; align-items: stretch; }
-  .topbar { flex-direction: column; align-items: flex-start; gap: 12px; }
-  .topbar h2 { font-size: 1.25rem; }
+  .topbar {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    margin: -20px -16px 20px;
+    padding: 14px 16px;
+    background: rgba(241, 245, 249, 0.85);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--gray-200);
+  }
+  [data-theme="dark"] .topbar {
+    background: rgba(15, 23, 42, 0.85);
+  }
+  .topbar h2 { font-size: 1.15rem; }
+  .user-info span { display: none; }
   .detail-grid { grid-template-columns: 1fr; }
   .detail-field.full-width { grid-column: 1; }
   .pagination { gap: 2px; }

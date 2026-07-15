@@ -105,10 +105,30 @@ function renderLayout(activePage, username, role = 'user') {
     </a>
   `;
 
+  // Barre de navigation mobile (façon app native) : accès direct aux sections
+  // les plus utilisées, le reste reste accessible via "Plus" (tiroir latéral).
+  const primaryTabs = [
+    { id: 'dashboard', icon: 'fa-chart-pie', label: 'Accueil', href: '/dashboard.html' },
+    { id: 'contacts', icon: 'fa-users', label: 'Contacts', href: '/contacts.html' },
+    { id: 'emails', icon: 'fa-envelope', label: 'Emails', href: '/emails.html' },
+  ];
+  const isPrimaryActive = primaryTabs.some(t => t.id === activePage);
+
+  const bottomNav = document.createElement('nav');
+  bottomNav.className = 'mobile-bottom-nav';
+  bottomNav.id = 'mobile-bottom-nav';
+  bottomNav.setAttribute('aria-label', 'Navigation mobile');
+  bottomNav.innerHTML = primaryTabs.map(t => {
+    const active = t.id === activePage ? ' active' : '';
+    const current = t.id === activePage ? ' aria-current="page"' : '';
+    return `<a href="${t.href}" class="bottom-nav-tab${active}"${current}><i class="fas ${t.icon}"></i><span>${t.label}</span></a>`;
+  }).join('') + `<button type="button" class="bottom-nav-tab${isPrimaryActive ? '' : ' active'}" id="bottom-nav-more"><i class="fas fa-ellipsis"></i><span>Plus</span></button>`;
+
   const main = document.querySelector('.main-content');
   document.body.insertBefore(hamburger, main);
   document.body.insertBefore(overlay, main);
   document.body.insertBefore(sidebar, main);
+  document.body.appendChild(bottomNav);
   main.insertBefore(topbar, main.firstChild);
 
   // Toast container
@@ -119,20 +139,24 @@ function renderLayout(activePage, username, role = 'user') {
     document.body.appendChild(tc);
   }
 
+  const openDrawer = () => {
+    sidebar.classList.add('open');
+    overlay.classList.add('visible');
+  };
+  const closeDrawer = () => {
+    sidebar.classList.remove('open');
+    overlay.classList.remove('visible');
+  };
+
   // Hamburger toggle
   hamburger.addEventListener('click', () => {
     sidebar.classList.toggle('open');
     overlay.classList.toggle('visible');
   });
-  overlay.addEventListener('click', () => {
-    sidebar.classList.remove('open');
-    overlay.classList.remove('visible');
-  });
+  overlay.addEventListener('click', closeDrawer);
+  document.getElementById('bottom-nav-more').addEventListener('click', openDrawer);
   sidebar.querySelectorAll('nav a').forEach(link => {
-    link.addEventListener('click', () => {
-      sidebar.classList.remove('open');
-      overlay.classList.remove('visible');
-    });
+    link.addEventListener('click', closeDrawer);
   });
 
   document.getElementById('logout-btn').addEventListener('click', async () => {
