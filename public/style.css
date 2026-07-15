@@ -133,53 +133,8 @@ h1, h2, h3, h4,
 }
 .login-box .input-group { margin-bottom: 16px; }
 
-/* ----- PAGE PUBLIQUE (inscription exposants) -----
-   Contrairement à #login-screen (position:fixed, plein écran, non
-   scrollable), cette page doit pouvoir défiler : le formulaire peut
-   dépasser la hauteur d'écran une fois le clavier mobile ouvert. */
-.public-page {
-  min-height: 100vh;
-  min-height: 100dvh;
-  background: linear-gradient(135deg, #04141a 0%, #0b2e38 45%, #0e7490 100%);
-  display: flex;
-  align-items: flex-start;
-  justify-content: center;
-  padding: 40px 20px calc(40px + env(safe-area-inset-bottom, 0px));
-}
-.public-card {
-  background: rgba(255, 255, 255, 0.97);
-  backdrop-filter: blur(20px);
-  padding: 36px 32px;
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow-xl), 0 0 0 1px rgba(255, 255, 255, 0.1);
-  width: 100%; max-width: 520px;
-  animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-}
-[data-theme="dark"] .public-card { background: rgba(21, 26, 39, 0.97); }
-.public-brand {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-family: var(--font-display);
-  font-size: 1.3rem;
-  font-weight: 700;
-  color: var(--gray-900);
-  margin-bottom: 24px;
-}
-.public-brand i {
-  width: 44px; height: 44px;
-  border-radius: 12px;
-  background: var(--primary-glow);
-  color: var(--primary);
-  display: flex; align-items: center; justify-content: center;
-  font-size: 1.1rem;
-  flex-shrink: 0;
-}
-.public-lead {
-  color: var(--gray-600);
-  font-size: 0.9rem;
-  margin-bottom: 16px;
-}
+/* ----- LISTE D'ÉVÉNEMENTS SÉLECTIONNABLES -----
+   Réutilisée par la modale "Inviter des exposants" (emails.html). */
 .event-picker-list {
   display: flex;
   flex-direction: column;
@@ -204,15 +159,6 @@ h1, h2, h3, h4,
 }
 .event-picker-item strong { font-size: 0.95rem; color: var(--gray-900); }
 .event-picker-item span { font-size: 0.78rem; color: var(--gray-500); }
-.event-summary {
-  padding: 16px 18px;
-  border-radius: var(--radius);
-  background: var(--primary-glow);
-  border: 1px solid var(--primary-light);
-  margin-bottom: 20px;
-}
-.event-summary strong { display: block; font-size: 1rem; color: var(--gray-900); margin-bottom: 4px; }
-.event-summary span { font-size: 0.82rem; color: var(--gray-600); display: block; }
 
 /* ----- SIDEBAR ----- */
 .sidebar {
@@ -2657,8 +2603,6 @@ th.sorted .sort-icon {
   .stat-card { padding: 18px; }
   .login-box { padding: 32px 24px; margin: 16px; }
   .toast-container { left: 16px; right: 16px; max-width: none; }
-  .public-page { padding: 24px 12px; }
-  .public-card { padding: 24px 20px; }
 }
 
 /* ----- NAV SEPARATOR ----- */

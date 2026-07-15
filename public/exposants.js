@@ -11,6 +11,7 @@ const evDateDebut = document.getElementById('ev-dateDebut');
 const evDateFin = document.getElementById('ev-dateFin');
 const evLieu = document.getElementById('ev-lieu');
 const evMaxExposants = document.getElementById('ev-maxExposants');
+const evPrixExposant = document.getElementById('ev-prixExposant');
 const evDescription = document.getElementById('ev-description');
 const eventModalTitle = document.getElementById('event-modal-title');
 
@@ -97,6 +98,11 @@ function renderEvents() {
       max.innerHTML = `<i class="fas fa-users"></i> Max ${ev.maxExposants} exposants`;
       meta.appendChild(max);
     }
+    if (ev.prixExposant) {
+      const prix = document.createElement('span');
+      prix.innerHTML = `<i class="fas fa-euro-sign"></i> ${escHtml(ev.prixExposant)}`;
+      meta.appendChild(prix);
+    }
 
     const counts = document.createElement('div');
     counts.className = 'event-card-counts';
@@ -151,7 +157,9 @@ function renderEvents() {
 }
 
 function formatDateRange(start, end) {
-  const opts = { day: 'numeric', month: 'short', year: 'numeric' };
+  // timeZone: 'UTC' évite qu'une date-calendrier glisse d'un jour selon le
+  // fuseau du navigateur (voir même correctif dans exposant-inscription.js).
+  const opts = { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' };
   const s = start ? new Date(start).toLocaleDateString('fr-FR', opts) : '';
   const e = end ? new Date(end).toLocaleDateString('fr-FR', opts) : '';
   return e && e !== s ? `${s} → ${e}` : s;
@@ -212,6 +220,7 @@ function openEventModal(mode, data) {
     evDateFin.value = data.dateFin || '';
     evLieu.value = data.lieu || '';
     evMaxExposants.value = data.maxExposants || '';
+    evPrixExposant.value = data.prixExposant || '';
     evDescription.value = data.description || '';
   }
 }
@@ -231,6 +240,7 @@ eventForm.addEventListener('submit', async (e) => {
     dateFin: evDateFin.value,
     lieu: evLieu.value.trim(),
     maxExposants: evMaxExposants.value,
+    prixExposant: evPrixExposant.value.trim(),
     description: evDescription.value.trim()
   };
   const id = evId.value;

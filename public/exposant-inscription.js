@@ -77,7 +77,7 @@ function showEventPicker() {
     btn.className = 'event-picker-item';
     btn.innerHTML = `
       <strong>${escHtml(ev.nom)}</strong>
-      <span>${escHtml(formatEventDates(ev))}${ev.lieu ? ' · ' + escHtml(ev.lieu) : ''}</span>
+      <span>${escHtml(formatEventDates(ev))}${ev.lieu ? ' · ' + escHtml(ev.lieu) : ''}${ev.prixExposant ? ' · ' + escHtml(ev.prixExposant) : ''}</span>
     `;
     btn.addEventListener('click', () => selectEvent(ev));
     eventPickerList.appendChild(btn);
@@ -85,7 +85,11 @@ function showEventPicker() {
 }
 
 function formatEventDates(ev) {
-  const opts = { day: 'numeric', month: 'long', year: 'numeric' };
+  // timeZone: 'UTC' évite qu'une date-calendrier ("2026-08-07") glisse d'un
+  // jour selon le fuseau du visiteur : new Date(iso) l'ancre à minuit UTC,
+  // donc toute conversion vers un fuseau négatif (ex: Pacific/Tahiti, -10)
+  // affiche sinon le jour précédent.
+  const opts = { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' };
   const start = ev.dateDebut ? new Date(ev.dateDebut).toLocaleDateString('fr-FR', opts) : '';
   const end = ev.dateFin ? new Date(ev.dateFin).toLocaleDateString('fr-FR', opts) : '';
   return end && end !== start ? `${start} → ${end}` : start;
@@ -101,6 +105,7 @@ function selectEvent(ev) {
     <strong>${escHtml(ev.nom)}</strong>
     <span><i class="fas fa-calendar"></i> ${escHtml(formatEventDates(ev))}</span>
     ${ev.lieu ? `<span><i class="fas fa-map-marker-alt"></i> ${escHtml(ev.lieu)}</span>` : ''}
+    ${ev.prixExposant ? `<span><i class="fas fa-euro-sign"></i> Emplacement exposant : ${escHtml(ev.prixExposant)}</span>` : ''}
     ${ev.description ? `<span>${escHtml(ev.description)}</span>` : ''}
   `;
 }

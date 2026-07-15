@@ -421,7 +421,7 @@ app.get('/api/events', isAuth, async (req, res) => {
 });
 
 app.post('/api/events', isAuth, async (req, res) => {
-  const { nom, description, lieu, dateDebut, dateFin, maxExposants, inscriptionsOuvertes } = req.body;
+  const { nom, description, lieu, dateDebut, dateFin, maxExposants, prixExposant, inscriptionsOuvertes } = req.body;
   if (!nom || !dateDebut) return res.status(400).json({ message: 'Le nom et la date de début sont obligatoires' });
 
   const events = await readJSON(EVENTS_FILE);
@@ -433,6 +433,7 @@ app.post('/api/events', isAuth, async (req, res) => {
     dateDebut,
     dateFin: dateFin || '',
     maxExposants: maxExposants ? parseInt(maxExposants) : null,
+    prixExposant: prixExposant || '',
     inscriptionsOuvertes: inscriptionsOuvertes !== false,
     createdAt: new Date().toISOString()
   };
@@ -446,13 +447,14 @@ app.put('/api/events/:id', isAuth, async (req, res) => {
   const event = events.find(e => e.id === req.params.id);
   if (!event) return res.status(404).json({ message: 'Événement non trouvé' });
 
-  const { nom, description, lieu, dateDebut, dateFin, maxExposants, inscriptionsOuvertes } = req.body;
+  const { nom, description, lieu, dateDebut, dateFin, maxExposants, prixExposant, inscriptionsOuvertes } = req.body;
   if (nom !== undefined) event.nom = nom;
   if (description !== undefined) event.description = description;
   if (lieu !== undefined) event.lieu = lieu;
   if (dateDebut !== undefined) event.dateDebut = dateDebut;
   if (dateFin !== undefined) event.dateFin = dateFin;
   if (maxExposants !== undefined) event.maxExposants = maxExposants ? parseInt(maxExposants) : null;
+  if (prixExposant !== undefined) event.prixExposant = prixExposant;
   if (inscriptionsOuvertes !== undefined) event.inscriptionsOuvertes = !!inscriptionsOuvertes;
 
   await writeJSON(EVENTS_FILE, events);
@@ -483,7 +485,7 @@ app.get('/api/public/events', async (req, res) => {
   const events = await readJSON(EVENTS_FILE);
   const open = events
     .filter(e => e.inscriptionsOuvertes)
-    .map(({ id, nom, description, lieu, dateDebut, dateFin }) => ({ id, nom, description, lieu, dateDebut, dateFin }));
+    .map(({ id, nom, description, lieu, dateDebut, dateFin, prixExposant }) => ({ id, nom, description, lieu, dateDebut, dateFin, prixExposant }));
   res.json(open);
 });
 

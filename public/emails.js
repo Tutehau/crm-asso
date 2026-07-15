@@ -100,26 +100,6 @@ const templates = {
   </div>
 </div>`
   },
-  exposants: {
-    subject: '🏪 Devenez exposant à [NOM DE L\'ÉVÉNEMENT] !',
-    body: `<div style="font-family: sans-serif; line-height: 1.6; color: #333; max-width: 600px;">
-  <h2 style="color: #0e7490;">🏪 Vous êtes commerçant ou artisan ?</h2>
-  <p>Bonjour,</p>
-  <p>Nous serions ravis de vous accueillir en tant qu'exposant lors de notre prochain événement :</p>
-  <div style="background: linear-gradient(135deg, #e6fbfc, #fff); padding: 20px; border-radius: 12px; border: 1px solid #a8ebee; margin: 20px 0; text-align: center;">
-    <h3 style="color: #0e7490; margin-bottom: 12px;">[NOM DE L'ÉVÉNEMENT]</h3>
-    <p>📅 <strong>[DATE]</strong></p>
-    <p>📍 <strong>[LIEU]</strong></p>
-  </div>
-  <p>Présentez vos créations, produits et savoir-faire dans un cadre festif et convivial, devant un large public.</p>
-  <p style="text-align: center;">
-    <a href="[LIEN_INSCRIPTION]" style="display: inline-block; padding: 12px 32px; background: #0e7490; color: white; text-decoration: none; border-radius: 8px; font-weight: 600;">Je m'inscris comme exposant</a>
-  </p>
-  <p style="font-size: 0.85em; color: #999;">Le lien d'inscription est disponible dans l'onglet <strong>Exposants</strong> du CRM, bouton « Copier le lien » sur la carte de l'événement.</p>
-  <p>Au plaisir de vous compter parmi nos exposants !</p>
-  <p>Cordialement,<br><strong>L'équipe organisatrice</strong></p>
-</div>`
-  },
   thankyou: {
     subject: '🙏 Merci pour votre engagement !',
     body: `<div style="font-family: sans-serif; line-height: 1.6; color: #333; max-width: 600px;">
@@ -306,6 +286,10 @@ function setupTemplates() {
   document.querySelectorAll('.template-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       const key = btn.dataset.template;
+      if (key === 'exposants') {
+        openExposantsInviteModal();
+        return;
+      }
       const tpl = templates[key];
       if (tpl) {
         emailSubject.value = tpl.subject;
@@ -315,6 +299,104 @@ function setupTemplates() {
       }
     });
   });
+}
+
+function applyTemplateContent(subject, body) {
+  emailSubject.value = subject;
+  emailBody.value = body;
+  updateStatus('draft');
+  saveDraft();
+}
+
+// ----- INVITATION EXPOSANTS (générée à partir d'un vrai événement) -----
+const exposantsInviteModal = document.getElementById('exposants-invite-modal');
+const exposantsInviteList = document.getElementById('exposants-invite-list');
+
+function closeExposantsInviteModal() { exposantsInviteModal.classList.remove('open'); }
+exposantsInviteModal.querySelector('.modal-close').addEventListener('click', closeExposantsInviteModal);
+exposantsInviteModal.addEventListener('click', (e) => { if (e.target === exposantsInviteModal) closeExposantsInviteModal(); });
+
+async function openExposantsInviteModal() {
+  exposantsInviteList.innerHTML = '<p style="color:var(--gray-400);font-size:0.85rem;padding:0 0 20px;">Chargement des événements...</p>';
+  exposantsInviteModal.classList.add('open');
+
+  let events = [];
+  try {
+    const res = await fetch('/api/events');
+    if (!res.ok) throw new Error();
+    events = (await res.json()).filter(e => e.inscriptionsOuvertes);
+  } catch {
+    exposantsInviteList.innerHTML = '<p style="color:var(--danger);font-size:0.85rem;">Erreur de chargement des événements.</p>';
+    return;
+  }
+
+  if (!events.length) {
+    exposantsInviteList.innerHTML = `
+      <p style="color:var(--gray-500);font-size:0.85rem;line-height:1.6;">
+        Aucun événement n'a ses inscriptions exposants ouvertes actuellement.
+        Ouvrez-en un depuis l'onglet <strong>Exposants</strong> pour pouvoir générer une invitation.
+      </p>`;
+    return;
+  }
+
+  exposantsInviteList.innerHTML = '';
+  events.forEach(ev => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'event-picker-item';
+    btn.innerHTML = `
+      <strong>${escHtml(ev.nom)}</strong>
+      <span>${escHtml(formatEventDateRange(ev))}${ev.lieu ? ' · ' + escHtml(ev.lieu) : ''}${ev.prixExposant ? ' · ' + escHtml(ev.prixExposant) : ''}</span>
+    `;
+    btn.addEventListener('click', () => {
+      const { subject, body } = buildExposantsInvite(ev);
+      applyTemplateContent(subject, body);
+      closeExposantsInviteModal();
+      showToast('Invitation générée avec les données de l\'événement', 'success');
+    });
+    exposantsInviteList.appendChild(btn);
+  });
+}
+
+function formatEventDateRange(ev) {
+  // timeZone: 'UTC' évite qu'une date-calendrier ("2026-08-07") glisse d'un
+  // jour selon le fuseau du navigateur (new Date(iso) l'ancre à minuit UTC).
+  const opts = { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' };
+  const start = ev.dateDebut ? new Date(ev.dateDebut).toLocaleDateString('fr-FR', opts) : '';
+  const end = ev.dateFin ? new Date(ev.dateFin).toLocaleDateString('fr-FR', opts) : '';
+  return end && end !== start ? `${start} → ${end}` : start;
+}
+
+function buildExposantsInvite(ev) {
+  const dates = formatEventDateRange(ev);
+  const link = `${location.origin}/exposant-inscription.html?event=${ev.id}`;
+  const subject = `🏪 Devenez exposant à ${ev.nom} !`;
+
+  const body = `<div style="font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; line-height: 1.6; color: #1d1d1f; max-width: 600px;">
+  <div style="background: linear-gradient(135deg, #04141a 0%, #0b2e38 45%, #00c2cb 100%); padding: 36px 32px; border-radius: 16px 16px 0 0; text-align: center;">
+    <p style="color: rgba(255,255,255,0.7); font-size: 11px; font-weight: 700; letter-spacing: 0.2em; text-transform: uppercase; margin: 0 0 10px;">Commerçants &amp; artisans</p>
+    <h1 style="color: #fff; font-size: 1.6em; margin: 0; font-weight: 900;">Devenez exposant</h1>
+  </div>
+  <div style="padding: 32px; border: 1px solid #eee; border-top: none; border-radius: 0 0 16px 16px; background: #fff;">
+    <p>Bonjour,</p>
+    <p>Nous serions ravis de vous accueillir en tant qu'exposant à l'occasion de :</p>
+    <div style="background: #e6fbfc; border: 1px solid #a8ebee; border-radius: 12px; padding: 20px; margin: 20px 0;">
+      <h2 style="color: #00c2cb; margin: 0 0 10px; font-size: 1.2em;">${escHtml(ev.nom)}</h2>
+      <p style="margin: 4px 0;">📅 <strong>${escHtml(dates)}</strong></p>
+      ${ev.lieu ? `<p style="margin: 4px 0;">📍 <strong>${escHtml(ev.lieu)}</strong></p>` : ''}
+      ${ev.prixExposant ? `<p style="margin: 4px 0;">💶 Emplacement exposant : <strong>${escHtml(ev.prixExposant)}</strong></p>` : '<p style="margin: 4px 0; color: #86868b;">💶 Tarif à préciser</p>'}
+    </div>
+    <p>Présentez vos créations, produits et savoir-faire dans un cadre festif, devant un large public.</p>
+    <p style="text-align: center; margin: 28px 0;">
+      <a href="${link}" style="display: inline-block; padding: 14px 32px; background: #00c2cb; color: white; text-decoration: none; border-radius: 999px; font-weight: 700;">Je m'inscris comme exposant</a>
+    </p>
+    <p style="font-size: 0.85em; color: #86868b;">Ou copiez ce lien dans votre navigateur :<br><a href="${link}" style="color:#00c2cb;word-break:break-all;">${link}</a></p>
+    <p>Au plaisir de vous compter parmi nos exposants !</p>
+    <p>Cordialement,<br><strong>L'équipe organisatrice</strong></p>
+  </div>
+</div>`;
+
+  return { subject, body };
 }
 
 // ----- FORMAT TOOLBAR -----
