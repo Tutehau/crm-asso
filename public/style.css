@@ -2422,6 +2422,55 @@ tr:last-child td { border-bottom: none; }
   margin: 0;
 }
 
+/* ----- BANNIÈRE D'INSTALLATION PWA ----- */
+.pwa-install {
+  position: fixed; left: 20px; right: 20px; bottom: 20px; z-index: 1200;
+  display: flex; justify-content: center;
+  transform: translateY(160%);
+  transition: transform .42s cubic-bezier(.16,.8,.3,1);
+  pointer-events: none;
+}
+.pwa-install.is-visible { transform: translateY(0); pointer-events: auto; }
+.pwa-install-inner {
+  display: flex; align-items: center; gap: 16px;
+  width: min(540px, 100%); padding: 16px 18px;
+  background: white;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl);
+}
+[data-theme="dark"] .pwa-install-inner {
+  background: #151a27;
+  border-color: var(--gray-200);
+}
+.pwa-install-icon { width: 52px; height: 52px; flex-shrink: 0; border-radius: 12px; object-fit: cover; }
+.pwa-install-body { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.pwa-install-body strong { font-size: 0.95rem; color: var(--gray-900); }
+[data-theme="dark"] .pwa-install-body strong { color: var(--gray-800); }
+.pwa-install-body span { font-size: 0.78rem; color: var(--gray-500); line-height: 1.4; }
+.pwa-install-actions { display: flex; align-items: center; gap: 8px; margin-left: auto; flex-shrink: 0; }
+.pwa-install-go {
+  min-height: 42px; padding: 0 20px; border: none; border-radius: 10px; cursor: pointer;
+  background: var(--primary); color: #fff; font: inherit; font-weight: 700; white-space: nowrap;
+  transition: var(--transition);
+}
+.pwa-install-go:hover { background: var(--primary-dark); transform: translateY(-1px); }
+.pwa-install-close {
+  display: grid; place-items: center; width: 34px; height: 34px; flex-shrink: 0; cursor: pointer;
+  border: 1px solid var(--gray-200); border-radius: var(--radius-full);
+  background: transparent; color: var(--gray-500); font-size: 0.8rem;
+  transition: var(--transition);
+}
+.pwa-install-close:hover { background: var(--gray-100); color: var(--gray-800); }
+@media (max-width: 640px) {
+  .pwa-install { left: 12px; right: 12px; bottom: 12px; }
+  .pwa-install-body span { font-size: 0.72rem; }
+}
+/* Sous 768px, la barre de navigation basse occupe le bas de l'écran */
+@media (max-width: 768px) {
+  .pwa-install { bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
+}
+
 /* ----- SORTABLE COLUMNS ----- */
 th.sortable {
   cursor: pointer;

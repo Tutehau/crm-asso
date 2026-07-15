@@ -10,6 +10,10 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
   <link rel="stylesheet" href="style.css" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#6366f1" />
+  <link rel="icon" href="icons/favicon-32.png" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
   <script>
     const saved = localStorage.getItem('crm-theme');
     if (saved) document.documentElement.setAttribute('data-theme', saved);
@@ -37,5 +41,6 @@
 
   <script src="shared.js"></script>
   <script src="dashboard.js"></script>
+  <script src="pwa.js"></script>
 </body>
 </html>
