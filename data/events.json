@@ -1,0 +1,134 @@
+[
+  {
+    "id": "97c042d4-7e10-450e-9430-e8bc2ac68670",
+    "nom": "Journée Portes Ouvertes – Tahiti Farani",
+    "description": "Venez rencontrer l'équipe, découvrir nos ateliers, nos projets et goûter à l'ambiance polynésienne de Tahiti Farani.",
+    "lieu": "Les Halles de Beaufort-en-Vallée",
+    "dateDebut": "2025-04-25",
+    "dateFin": "2025-04-26",
+    "maxExposants": null,
+    "inscriptionsOuvertes": false,
+    "createdAt": "2026-07-15T20:32:20.038Z"
+  },
+  {
+    "id": "244b9741-e8e6-4cd7-9736-045187844a04",
+    "nom": "Maohi Fest 1ère Édition – Team Maohi",
+    "description": "Un festival 100% ma'ohi porté par Team Maohi : spectacles, battles de danse, ateliers et rencontres autour de la culture polynésienne.",
+    "lieu": "Terrain de foot de Turquant (49)",
+    "dateDebut": "2025-08-07",
+    "dateFin": "2025-08-08",
+    "maxExposants": null,
+    "inscriptionsOuvertes": false,
+    "createdAt": "2026-07-15T20:32:20.038Z"
+  },
+  {
+    "id": "90c2585e-6acb-499b-913d-b4a1ae99338c",
+    "nom": "Journée Portes Ouvertes – Manava Anjou VA'A",
+    "description": "Découvrez la pirogue polynésienne avec Manava Anjou VA'A : initiation au va'a, rencontres et immersion polynésienne à Saumur.",
+    "lieu": "Base Nautique de Millocheau (Saumur)",
+    "dateDebut": "2026-04-25",
+    "dateFin": "2026-04-26",
+    "maxExposants": null,
+    "inscriptionsOuvertes": false,
+    "createdAt": "2026-07-15T20:32:20.038Z"
+  },
+  {
+    "id": "ec5ead86-3a23-4da9-9686-1633f73ebac8",
+    "nom": "Gala des élèves 2026 – Tahiti Farani",
+    "description": "Le rendez-vous de fin de saison pour célébrer le travail des élèves : danse, costumes, émotions et partage autour de la culture polynésienne.",
+    "lieu": "Parking Plantagenet de Beaufort-en-Vallée",
+    "dateDebut": "2026-06-20",
+    "dateFin": "",
+    "maxExposants": null,
+    "inscriptionsOuvertes": false,
+    "createdAt": "2026-07-15T20:32:20.038Z"
+  },
+  {
+    "id": "dee09e76-e937-429c-9289-47331629a6ff",
+    "nom": "Maohi Fest 2ème Édition – Team Maohi",
+    "description": "Un festival 100% ma'ohi porté par Team Maohi : spectacles, battles de danse, ateliers et rencontres autour de la culture polynésienne.",
+    "lieu": "Terrain de foot de Turquant (49)",
+    "dateDebut": "2026-08-07",
+    "dateFin": "2026-08-09",
+    "maxExposants": null,
+    "inscriptionsOuvertes": true,
+    "createdAt": "2026-07-15T20:32:20.038Z"
+  },
+  {
+    "id": "9b99c0b0-f325-448e-a169-2e4be98e2746",
+    "nom": "Journée Portes Ouvertes – Tahiti Farani",
+    "description": "Venez rencontrer l'équipe, découvrir nos ateliers, nos projets et goûter à l'ambiance polynésienne de Tahiti Farani.",
+    "lieu": "Salle Omnisport les ESQUISSEAUX de Beaufort-en-Vallée",
+    "dateDebut": "2026-09-12",
+    "dateFin": "2026-09-13",
+    "maxExposants": null,
+    "inscriptionsOuvertes": true,
+    "createdAt": "2026-07-15T20:32:20.038Z"
+  },
+  {
+    "id": "c77205b5-8a1e-4ba6-b645-35fe1217c65c",
+    "nom": "Gala des élèves 2027 – Tahiti Farani",
+    "description": "Le rendez-vous de fin de saison pour célébrer le travail des élèves : danse, costumes, émotions et partage autour de la culture polynésienne.",
+    "lieu": "Lieu à confirmer avec la mairie",
+    "dateDebut": "2027-06-19",
+    "dateFin": "2027-06-20",
+    "maxExposants": null,
+    "inscriptionsOuvertes": true,
+    "createdAt": "2026-07-15T20:32:20.039Z"
+  },
+  {
+    "id": "fbea6fd7-3f17-4218-84c4-33f594ab3ab0",
+    "nom": "Journée Portes Ouvertes 2027 – Tahiti Farani",
+    "description": "Venez rencontrer l’équipe, découvrir nos ateliers, nos projets et goûter à l’ambiance polynésienne de Tahiti Farani.",
+    "lieu": "Lieu à confirmer avec la mairie",
+    "dateDebut": "2027-09-18",
+    "dateFin": "2027-09-19",
+    "maxExposants": null,
+    "inscriptionsOuvertes": true,
+    "createdAt": "2026-07-15T20:32:20.039Z"
+  },
+  {
+    "id": "6b1c558a-e022-4162-bb16-aacab056b108",
+    "nom": "Gala des élèves 2028 – Tahiti Farani",
+    "description": "Le rendez-vous de fin de saison pour célébrer le travail des élèves : danse, costumes, émotions et partage autour de la culture polynésienne.",
+    "lieu": "Lieu à confirmer avec la mairie",
+    "dateDebut": "2028-06-17",
+    "dateFin": "2028-06-18",
+    "maxExposants": null,
+    "inscriptionsOuvertes": true,
+    "createdAt": "2026-07-15T20:32:20.039Z"
+  },
+  {
+    "id": "4b8be013-3ffb-4272-ab79-8ca635fd9e17",
+    "nom": "Journée Portes Ouvertes 2028 – Tahiti Farani",
+    "description": "Venez rencontrer l’équipe, découvrir nos ateliers, nos projets et goûter à l’ambiance polynésienne de Tahiti Farani.",
+    "lieu": "Lieu à confirmer avec la mairie",
+    "dateDebut": "2028-09-16",
+    "dateFin": "2028-09-17",
+    "maxExposants": null,
+    "inscriptionsOuvertes": true,
+    "createdAt": "2026-07-15T20:32:20.039Z"
+  },
+  {
+    "id": "80ff2814-f08a-44f6-9e17-3f2acaaeb8ba",
+    "nom": "Gala des élèves 2029 – Tahiti Farani",
+    "description": "Le rendez-vous de fin de saison pour célébrer le travail des élèves : danse, costumes, émotions et partage autour de la culture polynésienne.",
+    "lieu": "Lieu à confirmer avec la mairie",
+    "dateDebut": "2029-06-16",
+    "dateFin": "2029-06-17",
+    "maxExposants": null,
+    "inscriptionsOuvertes": true,
+    "createdAt": "2026-07-15T20:32:20.039Z"
+  },
+  {
+    "id": "6fdc8a51-4203-438e-a61a-4dec3e1bc2ab",
+    "nom": "Journée Portes Ouvertes 2029 – Tahiti Farani",
+    "description": "Venez rencontrer l’équipe, découvrir nos ateliers, nos projets et goûter à l’ambiance polynésienne de Tahiti Farani.",
+    "lieu": "Lieu à confirmer avec la mairie",
+    "dateDebut": "2029-09-15",
+    "dateFin": "2029-09-16",
+    "maxExposants": null,
+    "inscriptionsOuvertes": true,
+    "createdAt": "2026-07-15T20:32:20.039Z"
+  }
+]
