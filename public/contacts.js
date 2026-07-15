@@ -7,6 +7,7 @@ let currentSort = { field: 'prenom', order: 'asc' };
 const contactsBody = document.getElementById('contacts-body');
 const searchInput = document.getElementById('search-contacts');
 const statusFilter = document.getElementById('status-filter');
+const tagFilter = document.getElementById('tag-filter');
 const addContactBtn = document.getElementById('add-contact-btn');
 const modal = document.getElementById('contact-modal');
 const modalClose = document.querySelector('.modal-close');
@@ -41,8 +42,21 @@ const resultsCount = document.getElementById('results-count');
     }
   } catch {}
 
+  loadTagsFilter();
   loadContacts();
 })();
+
+async function loadTagsFilter() {
+  try {
+    const res = await fetch('/api/contacts/tags');
+    if (!res.ok) return;
+    const tags = await res.json();
+    const current = tagFilter.value;
+    tagFilter.innerHTML = '<option value="">Tous les tags</option>' +
+      tags.map(t => `<option value="${escHtml(t)}">${escHtml(t)}</option>`).join('');
+    tagFilter.value = current;
+  } catch {}
+}
 
 async function loadContacts() {
   showLoadingSkeleton();
@@ -59,6 +73,9 @@ async function loadContacts() {
 
     const status = statusFilter.value;
     if (status) params.set('status', status);
+
+    const tag = tagFilter.value;
+    if (tag) params.set('tag', tag);
 
     const res = await fetch(`/api/contacts?${params}`);
     if (!res.ok) throw new Error();
@@ -460,6 +477,16 @@ function viewContact(c) {
       <div class="detail-grid">
         ${fieldsHtml}
       </div>
+      <div class="history-section">
+        <div class="modal-section-title"><i class="fas fa-history"></i> Historique d'interactions</div>
+        <form id="history-form" class="history-form">
+          <input type="text" id="history-text" placeholder="Ajouter une note (appel, RDV, remarque...)" maxlength="500" required />
+          <button type="submit" class="btn-secondary"><i class="fas fa-plus"></i></button>
+        </form>
+        <div id="history-list" class="history-list">
+          <p class="history-empty">Chargement...</p>
+        </div>
+      </div>
       <div class="detail-actions">
         <button class="btn-primary" id="detail-edit-btn"><i class="fas fa-pen"></i> Modifier</button>
         <button class="btn-danger" id="detail-delete-btn" style="padding:10px 22px;border-radius:10px;font-weight:600;font-size:0.875rem;font-family:inherit;display:inline-flex;align-items:center;gap:8px;"><i class="fas fa-trash"></i> Supprimer</button>
@@ -485,6 +512,74 @@ function viewContact(c) {
       detailModal.remove();
       document.removeEventListener('keydown', handler);
     }
+  });
+
+  renderHistoryList(detailModal, c.id, c.historique || []);
+  detailModal.querySelector('#history-form').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const input = detailModal.querySelector('#history-text');
+    const text = input.value.trim();
+    if (!text) return;
+    try {
+      const res = await fetch(`/api/contacts/${c.id}/historique`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text })
+      });
+      if (!res.ok) throw new Error();
+      const entry = await res.json();
+      c.historique = c.historique || [];
+      c.historique.unshift(entry);
+      renderHistoryList(detailModal, c.id, c.historique);
+      input.value = '';
+    } catch {
+      showToast('Erreur lors de l\'ajout', 'error');
+    }
+  });
+}
+
+function renderHistoryList(detailModal, contactId, entries) {
+  const list = detailModal.querySelector('#history-list');
+  list.innerHTML = '';
+  if (!entries.length) {
+    list.innerHTML = '<p class="history-empty">Aucune interaction enregistrée pour le moment.</p>';
+    return;
+  }
+  entries.forEach(entry => {
+    const item = document.createElement('div');
+    item.className = 'history-item';
+
+    const content = document.createElement('div');
+    content.className = 'history-item-content';
+    const textEl = document.createElement('p');
+    textEl.className = 'history-item-text';
+    textEl.textContent = entry.text;
+    const metaEl = document.createElement('span');
+    metaEl.className = 'history-item-meta';
+    const date = entry.createdAt ? new Date(entry.createdAt).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' }) : '';
+    metaEl.textContent = `${entry.createdBy || ''} · ${date}`;
+    content.appendChild(textEl);
+    content.appendChild(metaEl);
+
+    const delBtn = document.createElement('button');
+    delBtn.className = 'history-item-delete';
+    delBtn.title = 'Supprimer cette entrée';
+    delBtn.innerHTML = '<i class="fas fa-times"></i>';
+    delBtn.addEventListener('click', async () => {
+      try {
+        const res = await fetch(`/api/contacts/${contactId}/historique/${entry.id}`, { method: 'DELETE' });
+        if (!res.ok) throw new Error();
+        const idx = entries.findIndex(e => e.id === entry.id);
+        if (idx !== -1) entries.splice(idx, 1);
+        renderHistoryList(detailModal, contactId, entries);
+      } catch {
+        showToast('Erreur lors de la suppression', 'error');
+      }
+    });
+
+    item.appendChild(content);
+    item.appendChild(delBtn);
+    list.appendChild(item);
   });
 }
 
@@ -560,6 +655,7 @@ contactForm.addEventListener('submit', async (e) => {
     if (!res.ok) throw new Error();
     closeModal();
     loadContacts();
+    loadTagsFilter();
     showToast(id ? 'Contact modifié' : 'Contact ajouté', 'success');
   } catch { showToast('Erreur lors de l\'enregistrement', 'error'); }
 });
@@ -588,6 +684,10 @@ const debouncedSearch = debounce(() => {
 
 searchInput.addEventListener('input', debouncedSearch);
 statusFilter.addEventListener('change', () => {
+  currentPage = 1;
+  loadContacts();
+});
+tagFilter.addEventListener('change', () => {
   currentPage = 1;
   loadContacts();
 });

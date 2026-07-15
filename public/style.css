@@ -2281,6 +2281,87 @@ tr:last-child td { border-bottom: none; }
   border-top: 1px solid var(--gray-100);
 }
 
+/* ----- HISTORIQUE D'INTERACTIONS (fiche contact) ----- */
+.history-section {
+  padding-top: 20px;
+  border-top: 1px solid var(--gray-100);
+}
+.history-form {
+  display: flex;
+  gap: 8px;
+  margin: 10px 0 14px;
+}
+.history-form input {
+  flex: 1;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 1px solid var(--gray-200);
+  background: var(--gray-50);
+  color: var(--gray-800);
+  font-family: inherit;
+  font-size: 0.85rem;
+}
+.history-form input:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+[data-theme="dark"] .history-form input {
+  background: #151a27;
+  border-color: var(--gray-200);
+}
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 220px;
+  overflow-y: auto;
+}
+.history-item {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 10px 14px;
+  background: var(--gray-50);
+  border-radius: 10px;
+  border: 1px solid var(--gray-100);
+}
+[data-theme="dark"] .history-item {
+  background: #151a27;
+  border-color: var(--gray-200);
+}
+.history-item-content { flex: 1; min-width: 0; }
+.history-item-text {
+  font-size: 0.85rem;
+  color: var(--gray-800);
+  margin: 0 0 4px;
+  word-break: break-word;
+}
+.history-item-meta {
+  font-size: 0.72rem;
+  color: var(--gray-400);
+}
+.history-item-delete {
+  border: none;
+  background: transparent;
+  color: var(--gray-400);
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 6px;
+  transition: var(--transition);
+  flex-shrink: 0;
+}
+.history-item-delete:hover {
+  color: var(--danger);
+  background: rgba(239, 68, 68, 0.1);
+}
+.history-empty {
+  font-size: 0.82rem;
+  color: var(--gray-400);
+  font-style: italic;
+  margin: 0;
+}
+
 /* ----- SORTABLE COLUMNS ----- */
 th.sortable {
   cursor: pointer;

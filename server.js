@@ -90,6 +90,34 @@ function isAdmin(req, res, next) {
   res.status(403).json({ message: 'Accès refusé : Administrateur requis' });
 }
 
+// ----- Anti bruteforce login (protection basique en mémoire) -----
+const LOGIN_MAX_ATTEMPTS = 5;
+const LOGIN_LOCKOUT_MS = 5 * 60 * 1000;
+const loginAttempts = new Map(); // username -> { count, lockedUntil }
+
+function isLoginLocked(username) {
+  const entry = loginAttempts.get(username);
+  if (!entry) return false;
+  if (entry.lockedUntil && entry.lockedUntil > Date.now()) return true;
+  if (entry.lockedUntil && entry.lockedUntil <= Date.now()) {
+    loginAttempts.delete(username);
+  }
+  return false;
+}
+
+function registerFailedLogin(username) {
+  const entry = loginAttempts.get(username) || { count: 0, lockedUntil: null };
+  entry.count += 1;
+  if (entry.count >= LOGIN_MAX_ATTEMPTS) {
+    entry.lockedUntil = Date.now() + LOGIN_LOCKOUT_MS;
+  }
+  loginAttempts.set(username, entry);
+}
+
+function clearLoginAttempts(username) {
+  loginAttempts.delete(username);
+}
+
 // ==================== ROUTES AUTH ====================
 app.get('/api/admin-exists', async (req, res) => {
   const users = await readJSON(USERS_FILE);
@@ -129,19 +157,30 @@ app.get('/api/me', (req, res) => {
 
 app.post('/api/login', async (req, res) => {
   const { username, password } = req.body;
-  console.log('🔑 Tentative login:', username);
+  if (!username || !password) {
+    return res.status(400).json({ message: 'Identifiant et mot de passe requis' });
+  }
+
+  if (isLoginLocked(username)) {
+    const entry = loginAttempts.get(username);
+    const waitMin = Math.ceil((entry.lockedUntil - Date.now()) / 60000);
+    return res.status(429).json({ message: `Trop de tentatives échouées. Réessayez dans ${waitMin} min.` });
+  }
+
   const users = await readJSON(USERS_FILE);
-  console.log('👥 Utilisateurs trouvés:', users.length);
   const user = users.find(u => u.username === username);
-  if (!user) {
-    console.log('❌ Utilisateur introuvable');
+  if (!user || user.status !== 'active') {
+    registerFailedLogin(username);
     return res.status(401).json({ message: 'Identifiants invalides' });
   }
   const match = await bcrypt.compare(password, user.password);
-  console.log('✅ Mot de passe match:', match);
   if (!match) {
+    registerFailedLogin(username);
     return res.status(401).json({ message: 'Identifiants invalides' });
   }
+
+  clearLoginAttempts(username);
+
   // Créer la session
   req.session.userId = user.id;
   req.session.username = user.username;
@@ -151,7 +190,6 @@ app.post('/api/login', async (req, res) => {
       console.error('❌ Erreur sauvegarde session:', err);
       return res.status(500).json({ message: 'Erreur interne' });
     }
-    console.log('✅ Session sauvegardée pour', user.username);
     res.json({ username: user.username, message: 'Authentifié' });
   });
 });
@@ -164,9 +202,13 @@ app.post('/api/logout', (req, res) => {
 });
 
 // ==================== ROUTES CONTACTS (protégées) ====================
+function parseTags(tagsStr) {
+  return (tagsStr || '').split(',').map(t => t.trim()).filter(Boolean);
+}
+
 app.get('/api/contacts', isAuth, async (req, res) => {
   let contacts = await readJSON(CONTACTS_FILE);
-  const { page, limit, search, status, sort, order } = req.query;
+  const { page, limit, search, status, tag, sort, order } = req.query;
 
   if (search) {
     const s = search.toLowerCase();
@@ -180,6 +222,10 @@ app.get('/api/contacts', isAuth, async (req, res) => {
 
   if (status) {
     contacts = contacts.filter(c => c.statut === status);
+  }
+
+  if (tag) {
+    contacts = contacts.filter(c => parseTags(c.tags).some(t => t.toLowerCase() === tag.toLowerCase()));
   }
 
   if (sort) {
@@ -208,6 +254,13 @@ app.get('/api/contacts', isAuth, async (req, res) => {
   }
 
   res.json(contacts);
+});
+
+app.get('/api/contacts/tags', isAuth, async (req, res) => {
+  const contacts = await readJSON(CONTACTS_FILE);
+  const tagSet = new Set();
+  contacts.forEach(c => parseTags(c.tags).forEach(t => tagSet.add(t)));
+  res.json([...tagSet].sort((a, b) => a.localeCompare(b)));
 });
 
 app.get('/api/contacts/:id', isAuth, async (req, res) => {
@@ -248,6 +301,42 @@ app.put('/api/contacts/:id', isAuth, async (req, res) => {
   contacts[index] = { ...contacts[index], ...req.body, updatedAt: new Date().toISOString() };
   await writeJSON(CONTACTS_FILE, contacts);
   res.json(contacts[index]);
+});
+
+// ----- Historique d'interactions par contact -----
+app.post('/api/contacts/:id/historique', isAuth, async (req, res) => {
+  const { text } = req.body;
+  if (!text || !text.trim()) return res.status(400).json({ message: 'Le texte de l\'entrée est obligatoire' });
+
+  const contacts = await readJSON(CONTACTS_FILE);
+  const contact = contacts.find(c => c.id === req.params.id);
+  if (!contact) return res.status(404).json({ message: 'Contact non trouvé' });
+
+  const entry = {
+    id: crypto.randomUUID(),
+    text: text.trim(),
+    createdAt: new Date().toISOString(),
+    createdBy: req.session.username
+  };
+  contact.historique = contact.historique || [];
+  contact.historique.unshift(entry);
+  contact.updatedAt = new Date().toISOString();
+
+  await writeJSON(CONTACTS_FILE, contacts);
+  res.status(201).json(entry);
+});
+
+app.delete('/api/contacts/:id/historique/:entryId', isAuth, async (req, res) => {
+  const contacts = await readJSON(CONTACTS_FILE);
+  const contact = contacts.find(c => c.id === req.params.id);
+  if (!contact) return res.status(404).json({ message: 'Contact non trouvé' });
+
+  const before = (contact.historique || []).length;
+  contact.historique = (contact.historique || []).filter(h => h.id !== req.params.entryId);
+  if (contact.historique.length === before) return res.status(404).json({ message: 'Entrée non trouvée' });
+
+  await writeJSON(CONTACTS_FILE, contacts);
+  res.json({ message: 'Entrée supprimée' });
 });
 
 app.delete('/api/contacts/all', isAuth, async (req, res) => {
@@ -748,6 +837,13 @@ app.put('/api/profile/username', isAuth, async (req, res) => {
   req.session.username = newUsername;
   await writeJSON(USERS_FILE, users);
   res.json({ message: 'Nom d\'utilisateur mis à jour' });
+});
+
+// Gestion centralisée des erreurs non capturées dans les routes
+app.use((err, req, res, next) => {
+  console.error('❌ Erreur non gérée:', err);
+  if (res.headersSent) return next(err);
+  res.status(500).json({ message: 'Erreur interne du serveur' });
 });
 
 // Démarrer le serveur
