@@ -3,8 +3,13 @@ let selectedIds = new Set();
 let currentPage = 1;
 let itemsPerPage = 25;
 let currentSort = { field: 'prenom', order: 'asc' };
+let viewMode = localStorage.getItem('crm-contacts-view') || 'table';
 
 const contactsBody = document.getElementById('contacts-body');
+const contactsGrid = document.getElementById('contacts-grid');
+const tableWrapper = document.querySelector('.contacts-table');
+const viewTableBtn = document.getElementById('view-table-btn');
+const viewGridBtn = document.getElementById('view-grid-btn');
 const searchInput = document.getElementById('search-contacts');
 const statusFilter = document.getElementById('status-filter');
 const tagFilter = document.getElementById('tag-filter');
@@ -42,9 +47,29 @@ const resultsCount = document.getElementById('results-count');
     }
   } catch {}
 
+  applyViewMode();
   loadTagsFilter();
   loadContacts();
 })();
+
+function applyViewMode() {
+  const isGrid = viewMode === 'grid';
+  tableWrapper.style.display = isGrid ? 'none' : '';
+  contactsGrid.style.display = isGrid ? 'grid' : 'none';
+  viewTableBtn.classList.toggle('active', !isGrid);
+  viewGridBtn.classList.toggle('active', isGrid);
+}
+
+viewTableBtn.addEventListener('click', () => {
+  viewMode = 'table';
+  localStorage.setItem('crm-contacts-view', viewMode);
+  applyViewMode();
+});
+viewGridBtn.addEventListener('click', () => {
+  viewMode = 'grid';
+  localStorage.setItem('crm-contacts-view', viewMode);
+  applyViewMode();
+});
 
 async function loadTagsFilter() {
   try {
@@ -84,10 +109,12 @@ async function loadContacts() {
     if (data.contacts) {
       allContacts = data.contacts;
       renderContacts(data);
+      renderContactsGrid(data.contacts);
       renderPagination(data);
     } else {
       allContacts = data;
       renderContacts({ contacts: data, total: data.length, page: 1, totalPages: 1 });
+      renderContactsGrid(data);
     }
     updateSummary();
   } catch {
@@ -135,6 +162,31 @@ function getAvatarColor(name) {
   return colors[Math.abs(hash) % colors.length];
 }
 
+// Un même libellé de tag garde toujours la même couleur (0 à 5), pour le
+// repérer visuellement sans avoir à lire le texte à chaque fois.
+function getTagColorClass(tag) {
+  let hash = 0;
+  for (let i = 0; i < tag.length; i++) hash = tag.charCodeAt(i) + ((hash << 5) - hash);
+  return `tag-badge tag-badge-${Math.abs(hash) % 6}`;
+}
+
+function buildEmptyState() {
+  const wrap = document.createElement('div');
+  wrap.className = 'empty-state';
+  wrap.innerHTML = `
+    <div class="empty-state-icon"><i class="fas fa-users"></i></div>
+    <h4>Aucun contact</h4>
+    <p>Commencez par ajouter votre premier contact</p>
+  `;
+  const btn = document.createElement('button');
+  btn.type = 'button';
+  btn.className = 'btn-primary';
+  btn.innerHTML = '<i class="fas fa-plus"></i> Nouveau contact';
+  btn.addEventListener('click', () => openModal('new', null));
+  wrap.appendChild(btn);
+  return wrap;
+}
+
 function renderContacts(data) {
   const contacts = data.contacts || [];
   const total = data.total || contacts.length;
@@ -151,7 +203,7 @@ function renderContacts(data) {
     tr.className = 'empty-row';
     const td = document.createElement('td');
     td.colSpan = 7;
-    td.innerHTML = '<div class="empty-state"><div class="empty-state-icon"><i class="fas fa-users"></i></div><h4>Aucun contact</h4><p>Commencez par ajouter votre premier contact</p></div>';
+    td.appendChild(buildEmptyState());
     tr.appendChild(td);
     contactsBody.appendChild(tr);
     updateBulkBar();
@@ -239,7 +291,7 @@ function renderContacts(data) {
     if (c.tags) {
       c.tags.split(',').map(t => t.trim()).filter(Boolean).forEach(t => {
         const tagBadge = document.createElement('span');
-        tagBadge.className = 'tag-badge';
+        tagBadge.className = getTagColorClass(t);
         tagBadge.textContent = t;
         tdTags.appendChild(tagBadge);
       });
@@ -281,6 +333,113 @@ function renderContacts(data) {
   });
 
   updateBulkBar();
+}
+
+// ----- VUE CARTES -----
+function renderContactsGrid(contacts) {
+  contactsGrid.innerHTML = '';
+
+  if (!contacts.length) {
+    contactsGrid.appendChild(buildEmptyState());
+    return;
+  }
+
+  contacts.forEach(c => {
+    const card = document.createElement('div');
+    card.className = 'contact-card';
+    if (selectedIds.has(c.id)) card.classList.add('selected');
+
+    const top = document.createElement('div');
+    top.className = 'contact-card-top';
+
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.className = 'row-checkbox contact-card-checkbox';
+    checkbox.checked = selectedIds.has(c.id);
+    checkbox.addEventListener('change', () => {
+      if (checkbox.checked) { selectedIds.add(c.id); card.classList.add('selected'); }
+      else { selectedIds.delete(c.id); card.classList.remove('selected'); }
+      updateBulkBar();
+      updateSelectAll();
+    });
+
+    const avatar = document.createElement('div');
+    avatar.className = 'contact-avatar';
+    avatar.style.background = getAvatarColor(c.prenom + c.nom);
+    avatar.textContent = getInitials(c.prenom, c.nom).toUpperCase();
+
+    const identity = document.createElement('div');
+    identity.className = 'contact-card-identity';
+    const nameEl = document.createElement('span');
+    nameEl.className = 'contact-fullname';
+    nameEl.textContent = `${c.prenom} ${c.nom}`;
+    const badge = document.createElement('span');
+    badge.className = `status-badge ${c.statut || ''}`;
+    badge.textContent = c.statut || 'Non défini';
+    identity.appendChild(nameEl);
+    identity.appendChild(badge);
+
+    top.appendChild(checkbox);
+    top.appendChild(avatar);
+    top.appendChild(identity);
+
+    const body = document.createElement('div');
+    body.className = 'contact-card-body';
+
+    const phone = document.createElement('span');
+    phone.className = 'phone-display';
+    phone.innerHTML = `<i class="fas fa-phone"></i> ${escHtml(c.telephone || '-')}`;
+    body.appendChild(phone);
+
+    if (c.email) {
+      const email = document.createElement('span');
+      email.className = 'email-display';
+      email.innerHTML = `<i class="fas fa-envelope"></i> ${escHtml(c.email)}`;
+      body.appendChild(email);
+    }
+
+    if (c.tags) {
+      const tagsWrap = document.createElement('div');
+      tagsWrap.className = 'contact-card-tags';
+      c.tags.split(',').map(t => t.trim()).filter(Boolean).forEach(t => {
+        const tagBadge = document.createElement('span');
+        tagBadge.className = getTagColorClass(t);
+        tagBadge.textContent = t;
+        tagsWrap.appendChild(tagBadge);
+      });
+      body.appendChild(tagsWrap);
+    }
+
+    const actions = document.createElement('div');
+    actions.className = 'contact-card-actions';
+
+    const btnView = document.createElement('button');
+    btnView.className = 'btn-action btn-action-view';
+    btnView.title = 'Voir';
+    btnView.innerHTML = '<i class="fas fa-eye"></i>';
+    btnView.addEventListener('click', () => viewContact(c));
+
+    const btnEdit = document.createElement('button');
+    btnEdit.className = 'btn-action btn-action-edit';
+    btnEdit.title = 'Modifier';
+    btnEdit.innerHTML = '<i class="fas fa-pen"></i>';
+    btnEdit.addEventListener('click', () => editContact(c));
+
+    const btnDelete = document.createElement('button');
+    btnDelete.className = 'btn-action btn-action-delete';
+    btnDelete.title = 'Supprimer';
+    btnDelete.innerHTML = '<i class="fas fa-trash"></i>';
+    btnDelete.addEventListener('click', () => deleteContact(c.id));
+
+    actions.appendChild(btnView);
+    actions.appendChild(btnEdit);
+    actions.appendChild(btnDelete);
+
+    card.appendChild(top);
+    card.appendChild(body);
+    card.appendChild(actions);
+    contactsGrid.appendChild(card);
+  });
 }
 
 // ----- PAGINATION -----

@@ -23,28 +23,28 @@
   <main class="main-content">
     <!-- Stats rapides contacts -->
     <div class="contacts-summary">
-      <div class="contacts-summary-item">
+      <div class="contacts-summary-item total">
         <i class="fas fa-address-book"></i>
         <div>
           <span class="contacts-summary-value" id="count-total">0</span>
           <span class="contacts-summary-label">contacts</span>
         </div>
       </div>
-      <div class="contacts-summary-item">
+      <div class="contacts-summary-item membres">
         <i class="fas fa-id-card"></i>
         <div>
           <span class="contacts-summary-value" id="count-membres">0</span>
           <span class="contacts-summary-label">membres</span>
         </div>
       </div>
-      <div class="contacts-summary-item">
+      <div class="contacts-summary-item benevoles">
         <i class="fas fa-hand-holding-heart"></i>
         <div>
           <span class="contacts-summary-value" id="count-benevoles">0</span>
           <span class="contacts-summary-label">bénévoles</span>
         </div>
       </div>
-      <div class="contacts-summary-item">
+      <div class="contacts-summary-item bureau">
         <i class="fas fa-crown"></i>
         <div>
           <span class="contacts-summary-value" id="count-bureau">0</span>
@@ -67,6 +67,10 @@
     <div class="contacts-toolbar">
       <div class="contacts-toolbar-left">
         <button id="add-contact-btn" class="btn-primary"><i class="fas fa-plus"></i> Nouveau contact</button>
+        <div class="view-toggle" role="group" aria-label="Mode d'affichage">
+          <button type="button" class="view-toggle-btn" id="view-table-btn" title="Vue tableau"><i class="fas fa-list"></i></button>
+          <button type="button" class="view-toggle-btn" id="view-grid-btn" title="Vue cartes"><i class="fas fa-grip"></i></button>
+        </div>
       </div>
       <div class="contacts-toolbar-right">
         <div class="search-bar search-bar-lg">
@@ -111,6 +115,9 @@
         </tbody>
       </table>
     </div>
+
+    <!-- Vue cartes -->
+    <div class="contacts-grid" id="contacts-grid" style="display:none;"></div>
 
     <!-- Footer + Pagination -->
     <div class="contacts-footer">
