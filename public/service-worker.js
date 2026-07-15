@@ -13,7 +13,7 @@
  * Incrémente CACHE_VERSION à chaque déploiement significatif pour
  * forcer le nettoyage de l'ancien cache (voir "activate" ci-dessous).
  */
-const CACHE_VERSION = "crm-asso-cache-v2";
+const CACHE_VERSION = "crm-asso-cache-v3";
 
 const CORE_ASSETS = [
     "./",
@@ -21,6 +21,7 @@ const CORE_ASSETS = [
     "dashboard.html",
     "contacts.html",
     "emails.html",
+    "exposants.html",
     "import-export.html",
     "users.html",
     "settings.html",
@@ -32,6 +33,7 @@ const CORE_ASSETS = [
     "dashboard.js",
     "contacts.js",
     "emails.js",
+    "exposants.js",
     "import-export.js",
     "users.js",
     "settings.js",

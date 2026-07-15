@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>CRM · Exposants</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <link rel="manifest" href="manifest.json" />
+  <meta name="theme-color" content="#0e7490" />
+  <link rel="icon" href="icons/favicon-32.png" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <script>
+    const saved = localStorage.getItem('crm-theme');
+    if (saved) document.documentElement.setAttribute('data-theme', saved);
+    else if (window.matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.setAttribute('data-theme', 'dark');
+  </script>
+</head>
+<body>
+  <main class="main-content">
+    <!-- Section Événements -->
+    <div class="section-header">
+      <div>
+        <h3><i class="fas fa-calendar-days"></i> Événements</h3>
+        <p class="section-subtitle">Ouvrez les inscriptions exposants et partagez le lien public</p>
+      </div>
+      <button id="add-event-btn" class="btn-primary"><i class="fas fa-plus"></i> Nouvel événement</button>
+    </div>
+
+    <div class="events-grid" id="events-grid">
+      <div class="empty-state">
+        <div class="empty-state-icon"><i class="fas fa-calendar-days"></i></div>
+        <h4>Aucun événement</h4>
+        <p>Créez un événement pour ouvrir les inscriptions exposants</p>
+      </div>
+    </div>
+
+    <!-- Section Inscriptions -->
+    <div class="section-header" style="margin-top:36px;">
+      <div>
+        <h3><i class="fas fa-store"></i> Inscriptions exposants</h3>
+        <p class="section-subtitle">Validez ou refusez les demandes reçues</p>
+      </div>
+    </div>
+
+    <div class="contacts-toolbar">
+      <div class="contacts-toolbar-right" style="width:100%;">
+        <select id="event-filter" class="filter-select">
+          <option value="">Tous les événements</option>
+        </select>
+        <select id="statut-filter" class="filter-select">
+          <option value="">Tous les statuts</option>
+          <option value="en_attente">En attente</option>
+          <option value="valide">Validé</option>
+          <option value="refuse">Refusé</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="table-wrapper contacts-table">
+      <table>
+        <thead><tr>
+          <th><i class="fas fa-store"></i> Entreprise</th>
+          <th><i class="fas fa-user"></i> Contact</th>
+          <th><i class="fas fa-phone"></i> Téléphone</th>
+          <th><i class="fas fa-calendar"></i> Événement</th>
+          <th><i class="fas fa-bookmark"></i> Statut</th>
+          <th>Actions</th>
+        </tr></thead>
+        <tbody id="exposants-body">
+          <tr class="empty-row"><td colspan="6">
+            <div class="empty-state">
+              <div class="empty-state-icon"><i class="fas fa-store"></i></div>
+              <h4>Aucune inscription</h4>
+              <p>Les demandes des exposants apparaîtront ici</p>
+            </div>
+          </td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="contacts-grid" id="exposants-grid" style="display:none;"></div>
+  </main>
+
+  <!-- MODAL Événement -->
+  <div id="event-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-header-icon"><i class="fas fa-calendar-days" id="event-modal-icon"></i></div>
+        <div>
+          <h2 id="event-modal-title">Nouvel événement</h2>
+          <p class="modal-subtitle">Les exposants pourront s'inscrire via un lien dédié</p>
+        </div>
+        <span class="modal-close"><i class="fas fa-times"></i></span>
+      </div>
+      <form id="event-form">
+        <input type="hidden" id="ev-id" />
+        <div class="modal-section">
+          <div class="form-grid">
+            <div class="input-group full-width"><i class="fas fa-tag"></i><input type="text" id="ev-nom" placeholder="Nom de l'événement *" required /></div>
+            <div class="input-group"><i class="fas fa-calendar-alt"></i><input type="date" id="ev-dateDebut" required /></div>
+            <div class="input-group"><i class="fas fa-calendar-check"></i><input type="date" id="ev-dateFin" placeholder="Date de fin" /></div>
+            <div class="input-group"><i class="fas fa-map-marker-alt"></i><input type="text" id="ev-lieu" placeholder="Lieu" /></div>
+            <div class="input-group"><i class="fas fa-users"></i><input type="number" id="ev-maxExposants" placeholder="Nombre max d'exposants" min="1" /></div>
+            <div class="input-group full-width"><i class="fas fa-align-left"></i><textarea id="ev-description" placeholder="Description (visible sur la page publique)"></textarea></div>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="button" class="btn-secondary modal-close-btn"><i class="fas fa-times"></i> Annuler</button>
+          <button type="submit" id="event-modal-submit" class="btn-primary"><i class="fas fa-save"></i> Enregistrer</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="shared.js"></script>
+  <script src="exposants.js"></script>
+  <script src="pwa.js"></script>
+</body>
+</html>

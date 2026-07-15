@@ -35,6 +35,8 @@ const CONTACTS_FILE = path.join(DATA_DIR, 'contacts.json');
 const USERS_FILE = path.join(DATA_DIR, 'users.json');
 const SETTINGS_FILE = path.join(DATA_DIR, 'settings.json');
 const EMAILS_FILE = path.join(DATA_DIR, 'emails.json');
+const EVENTS_FILE = path.join(DATA_DIR, 'events.json');
+const EXHIBITORS_FILE = path.join(DATA_DIR, 'exposants.json');
 
 // Initialisation des fichiers
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR);
@@ -46,6 +48,8 @@ if (!fs.existsSync(SETTINGS_FILE)) {
   fs.writeFileSync(SETTINGS_FILE, JSON.stringify({ smtpHost: '', smtpPort: 587, smtpUser: '', smtpPass: '', smtpFrom: '', assoName: '', itemsPerPage: 25 }));
 }
 if (!fs.existsSync(EMAILS_FILE)) fs.writeFileSync(EMAILS_FILE, JSON.stringify([]));
+if (!fs.existsSync(EVENTS_FILE)) fs.writeFileSync(EVENTS_FILE, JSON.stringify([]));
+if (!fs.existsSync(EXHIBITORS_FILE)) fs.writeFileSync(EXHIBITORS_FILE, JSON.stringify([]));
 
 // Helpers JSON
 async function readJSON(file) {
@@ -399,6 +403,151 @@ app.post('/api/import', isAuth, async (req, res) => {
   });
   await writeJSON(CONTACTS_FILE, existing);
   res.json({ message: `${imported.length} contacts importés` });
+});
+
+// ==================== ÉVÉNEMENTS & EXPOSANTS ====================
+
+// -- Événements (admin) --
+app.get('/api/events', isAuth, async (req, res) => {
+  const events = await readJSON(EVENTS_FILE);
+  const exposants = await readJSON(EXHIBITORS_FILE);
+  const withCounts = events.map(e => ({
+    ...e,
+    exposantsCount: exposants.filter(x => x.eventId === e.id).length,
+    exposantsEnAttente: exposants.filter(x => x.eventId === e.id && x.statut === 'en_attente').length
+  }));
+  withCounts.sort((a, b) => new Date(a.dateDebut || 0) - new Date(b.dateDebut || 0));
+  res.json(withCounts);
+});
+
+app.post('/api/events', isAuth, async (req, res) => {
+  const { nom, description, lieu, dateDebut, dateFin, maxExposants, inscriptionsOuvertes } = req.body;
+  if (!nom || !dateDebut) return res.status(400).json({ message: 'Le nom et la date de début sont obligatoires' });
+
+  const events = await readJSON(EVENTS_FILE);
+  const newEvent = {
+    id: crypto.randomUUID(),
+    nom,
+    description: description || '',
+    lieu: lieu || '',
+    dateDebut,
+    dateFin: dateFin || '',
+    maxExposants: maxExposants ? parseInt(maxExposants) : null,
+    inscriptionsOuvertes: inscriptionsOuvertes !== false,
+    createdAt: new Date().toISOString()
+  };
+  events.push(newEvent);
+  await writeJSON(EVENTS_FILE, events);
+  res.status(201).json(newEvent);
+});
+
+app.put('/api/events/:id', isAuth, async (req, res) => {
+  const events = await readJSON(EVENTS_FILE);
+  const event = events.find(e => e.id === req.params.id);
+  if (!event) return res.status(404).json({ message: 'Événement non trouvé' });
+
+  const { nom, description, lieu, dateDebut, dateFin, maxExposants, inscriptionsOuvertes } = req.body;
+  if (nom !== undefined) event.nom = nom;
+  if (description !== undefined) event.description = description;
+  if (lieu !== undefined) event.lieu = lieu;
+  if (dateDebut !== undefined) event.dateDebut = dateDebut;
+  if (dateFin !== undefined) event.dateFin = dateFin;
+  if (maxExposants !== undefined) event.maxExposants = maxExposants ? parseInt(maxExposants) : null;
+  if (inscriptionsOuvertes !== undefined) event.inscriptionsOuvertes = !!inscriptionsOuvertes;
+
+  await writeJSON(EVENTS_FILE, events);
+  res.json(event);
+});
+
+app.delete('/api/events/:id', isAuth, async (req, res) => {
+  const events = await readJSON(EVENTS_FILE);
+  const filtered = events.filter(e => e.id !== req.params.id);
+  if (filtered.length === events.length) return res.status(404).json({ message: 'Événement non trouvé' });
+  await writeJSON(EVENTS_FILE, filtered);
+
+  // Les inscriptions liées à un événement supprimé n'ont plus de sens à conserver.
+  const exposants = await readJSON(EXHIBITORS_FILE);
+  await writeJSON(EXHIBITORS_FILE, exposants.filter(x => x.eventId !== req.params.id));
+
+  res.json({ message: 'Événement supprimé' });
+});
+
+// -- Événements ouverts (public, pour la page d'inscription exposants) --
+app.get('/api/public/events', async (req, res) => {
+  const events = await readJSON(EVENTS_FILE);
+  const open = events
+    .filter(e => e.inscriptionsOuvertes)
+    .map(({ id, nom, description, lieu, dateDebut, dateFin }) => ({ id, nom, description, lieu, dateDebut, dateFin }));
+  res.json(open);
+});
+
+// -- Inscriptions exposants (public) --
+app.post('/api/public/exposants', async (req, res) => {
+  const { eventId, entreprise, contactNom, email, telephone, activite } = req.body;
+  if (!eventId || !entreprise || !contactNom || !telephone) {
+    return res.status(400).json({ message: 'Événement, entreprise, contact et téléphone sont obligatoires' });
+  }
+
+  const events = await readJSON(EVENTS_FILE);
+  const event = events.find(e => e.id === eventId);
+  if (!event || !event.inscriptionsOuvertes) {
+    return res.status(400).json({ message: 'Les inscriptions pour cet événement ne sont pas ouvertes' });
+  }
+
+  const exposants = await readJSON(EXHIBITORS_FILE);
+
+  if (event.maxExposants) {
+    const count = exposants.filter(x => x.eventId === eventId && x.statut !== 'refuse').length;
+    if (count >= event.maxExposants) {
+      return res.status(400).json({ message: 'Le nombre maximum d\'exposants est atteint pour cet événement' });
+    }
+  }
+
+  const registration = {
+    id: crypto.randomUUID(),
+    eventId,
+    entreprise,
+    contactNom,
+    email: email || '',
+    telephone,
+    activite: activite || '',
+    statut: 'en_attente',
+    createdAt: new Date().toISOString()
+  };
+  exposants.push(registration);
+  await writeJSON(EXHIBITORS_FILE, exposants);
+  res.status(201).json({ message: 'Inscription envoyée avec succès' });
+});
+
+// -- Inscriptions exposants (admin) --
+app.get('/api/exposants', isAuth, async (req, res) => {
+  const { eventId, statut } = req.query;
+  let exposants = await readJSON(EXHIBITORS_FILE);
+  if (eventId) exposants = exposants.filter(x => x.eventId === eventId);
+  if (statut) exposants = exposants.filter(x => x.statut === statut);
+  exposants.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+  res.json(exposants);
+});
+
+app.put('/api/exposants/:id', isAuth, async (req, res) => {
+  const { statut } = req.body;
+  if (!['en_attente', 'valide', 'refuse'].includes(statut)) {
+    return res.status(400).json({ message: 'Statut invalide' });
+  }
+  const exposants = await readJSON(EXHIBITORS_FILE);
+  const registration = exposants.find(x => x.id === req.params.id);
+  if (!registration) return res.status(404).json({ message: 'Inscription non trouvée' });
+  registration.statut = statut;
+  await writeJSON(EXHIBITORS_FILE, exposants);
+  res.json(registration);
+});
+
+app.delete('/api/exposants/:id', isAuth, async (req, res) => {
+  const exposants = await readJSON(EXHIBITORS_FILE);
+  const filtered = exposants.filter(x => x.id !== req.params.id);
+  if (filtered.length === exposants.length) return res.status(404).json({ message: 'Inscription non trouvée' });
+  await writeJSON(EXHIBITORS_FILE, filtered);
+  res.json({ message: 'Inscription supprimée' });
 });
 
 // ==================== EMAILS ====================

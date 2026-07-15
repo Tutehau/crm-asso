@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>Inscription exposant</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <link rel="stylesheet" href="style.css" />
+  <meta name="theme-color" content="#0e7490" />
+  <link rel="icon" href="icons/favicon-32.png" />
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" />
+  <script>
+    const saved = localStorage.getItem('crm-theme');
+    if (saved) document.documentElement.setAttribute('data-theme', saved);
+    else if (window.matchMedia('(prefers-color-scheme: dark)').matches) document.documentElement.setAttribute('data-theme', 'dark');
+  </script>
+</head>
+<body>
+  <div class="public-page">
+    <div class="public-card">
+      <div class="public-brand">
+        <i class="fas fa-store"></i>
+        <span>Inscription exposant</span>
+      </div>
+
+      <!-- Sélection d'événement (si plusieurs événements ouverts) -->
+      <div id="event-picker" style="display:none;">
+        <p class="public-lead">Choisissez l'événement auquel vous souhaitez vous inscrire :</p>
+        <div id="event-picker-list" class="event-picker-list"></div>
+      </div>
+
+      <!-- Aucun événement ouvert -->
+      <div id="no-events" style="display:none;">
+        <div class="empty-state">
+          <div class="empty-state-icon"><i class="fas fa-calendar-xmark"></i></div>
+          <h4>Aucune inscription ouverte</h4>
+          <p>Il n'y a pas d'événement acceptant des exposants pour le moment. Revenez bientôt !</p>
+        </div>
+      </div>
+
+      <!-- Formulaire d'inscription -->
+      <div id="registration-form-wrap" style="display:none;">
+        <div id="event-summary" class="event-summary"></div>
+        <form id="registration-form">
+          <div class="modal-section">
+            <div class="form-grid">
+              <div class="input-group full-width"><i class="fas fa-store"></i><input type="text" id="f-entreprise" placeholder="Nom de l'entreprise / stand *" required /></div>
+              <div class="input-group"><i class="fas fa-user"></i><input type="text" id="f-contact" placeholder="Nom du contact *" required /></div>
+              <div class="input-group"><i class="fas fa-phone"></i><input type="tel" id="f-telephone" placeholder="Téléphone *" required /></div>
+              <div class="input-group full-width"><i class="fas fa-envelope"></i><input type="email" id="f-email" placeholder="Email" /></div>
+              <div class="input-group full-width"><i class="fas fa-align-left"></i><textarea id="f-activite" placeholder="Décrivez votre activité / ce que vous proposerez"></textarea></div>
+            </div>
+          </div>
+          <div id="registration-error" class="message error" style="display:none;"></div>
+          <div class="form-actions">
+            <button type="submit" id="registration-submit" class="btn-primary" style="width:100%;justify-content:center;"><i class="fas fa-paper-plane"></i> Envoyer ma demande</button>
+          </div>
+        </form>
+      </div>
+
+      <!-- Confirmation -->
+      <div id="registration-success" style="display:none;">
+        <div class="empty-state">
+          <div class="empty-state-icon" style="background:var(--success-light);"><i class="fas fa-check" style="color:var(--success);"></i></div>
+          <h4>Demande envoyée !</h4>
+          <p>Votre inscription a été transmise à l'organisation. Vous serez contacté(e) pour la confirmation.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="shared.js"></script>
+  <script src="exposant-inscription.js"></script>
+</body>
+</html>

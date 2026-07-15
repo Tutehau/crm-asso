@@ -133,6 +133,87 @@ h1, h2, h3, h4,
 }
 .login-box .input-group { margin-bottom: 16px; }
 
+/* ----- PAGE PUBLIQUE (inscription exposants) -----
+   Contrairement à #login-screen (position:fixed, plein écran, non
+   scrollable), cette page doit pouvoir défiler : le formulaire peut
+   dépasser la hauteur d'écran une fois le clavier mobile ouvert. */
+.public-page {
+  min-height: 100vh;
+  min-height: 100dvh;
+  background: linear-gradient(135deg, #04141a 0%, #0b2e38 45%, #0e7490 100%);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 20px calc(40px + env(safe-area-inset-bottom, 0px));
+}
+.public-card {
+  background: rgba(255, 255, 255, 0.97);
+  backdrop-filter: blur(20px);
+  padding: 36px 32px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xl), 0 0 0 1px rgba(255, 255, 255, 0.1);
+  width: 100%; max-width: 520px;
+  animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+}
+[data-theme="dark"] .public-card { background: rgba(21, 26, 39, 0.97); }
+.public-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--gray-900);
+  margin-bottom: 24px;
+}
+.public-brand i {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  background: var(--primary-glow);
+  color: var(--primary);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+.public-lead {
+  color: var(--gray-600);
+  font-size: 0.9rem;
+  margin-bottom: 16px;
+}
+.event-picker-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.event-picker-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px 18px;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius);
+  background: var(--gray-50);
+  cursor: pointer;
+  transition: var(--transition);
+  text-align: left;
+  font-family: inherit;
+}
+.event-picker-item:hover {
+  border-color: var(--primary);
+  background: var(--primary-glow);
+}
+.event-picker-item strong { font-size: 0.95rem; color: var(--gray-900); }
+.event-picker-item span { font-size: 0.78rem; color: var(--gray-500); }
+.event-summary {
+  padding: 16px 18px;
+  border-radius: var(--radius);
+  background: var(--primary-glow);
+  border: 1px solid var(--primary-light);
+  margin-bottom: 20px;
+}
+.event-summary strong { display: block; font-size: 1rem; color: var(--gray-900); margin-bottom: 4px; }
+.event-summary span { font-size: 0.82rem; color: var(--gray-600); display: block; }
+
 /* ----- SIDEBAR ----- */
 .sidebar {
   position: fixed; top: 0; left: 0; width: var(--sidebar-width); height: 100%;
@@ -2576,6 +2657,8 @@ th.sorted .sort-icon {
   .stat-card { padding: 18px; }
   .login-box { padding: 32px 24px; margin: 16px; }
   .toast-container { left: 16px; right: 16px; max-width: none; }
+  .public-page { padding: 24px 12px; }
+  .public-card { padding: 24px 20px; }
 }
 
 /* ----- NAV SEPARATOR ----- */
@@ -3132,6 +3215,116 @@ th.sorted .sort-icon {
   margin-top: auto;
 }
 [data-theme="dark"] .contact-card { background: var(--gray-50, #151a27); }
+
+/* -- En-tête de section (page Exposants) -- */
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+  flex-wrap: wrap;
+}
+.section-header h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--gray-900);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 4px;
+}
+.section-header h3 i { color: var(--primary); }
+.section-subtitle {
+  font-size: 0.82rem;
+  color: var(--gray-500);
+}
+
+/* -- Cartes événement -- */
+.events-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+  margin-bottom: 8px;
+}
+.event-card {
+  background: white;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  transition: var(--transition);
+}
+.event-card:hover { box-shadow: var(--shadow-md); }
+.event-card.closed { opacity: 0.7; }
+[data-theme="dark"] .event-card { background: var(--gray-50, #151a27); }
+.event-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 10px;
+}
+.event-card-title { font-size: 1rem; font-weight: 700; color: var(--gray-900); }
+.event-card-dates {
+  font-size: 0.78rem;
+  color: var(--gray-500);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 4px;
+}
+.event-status-pill {
+  padding: 3px 10px;
+  border-radius: var(--radius-full);
+  font-size: 0.68rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+.event-status-pill.open { background: var(--success-light); color: var(--success); }
+.event-status-pill.closed { background: var(--gray-100); color: var(--gray-500); }
+.event-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  font-size: 0.8rem;
+  color: var(--gray-500);
+}
+.event-card-meta span { display: flex; align-items: center; gap: 6px; }
+.event-card-meta i { color: var(--primary); }
+.event-card-counts {
+  display: flex;
+  gap: 10px;
+}
+.event-count-chip {
+  flex: 1;
+  text-align: center;
+  padding: 8px;
+  border-radius: 8px;
+  background: var(--gray-50);
+}
+.event-count-chip strong { display: block; font-size: 1.1rem; color: var(--gray-900); }
+.event-count-chip span { font-size: 0.68rem; color: var(--gray-500); text-transform: uppercase; letter-spacing: 0.03em; }
+.event-count-chip.pending strong { color: var(--warning); }
+.event-card-actions {
+  display: flex;
+  gap: 8px;
+  padding-top: 12px;
+  border-top: 1px solid var(--gray-100);
+}
+.event-card-actions .btn-action { flex-shrink: 0; }
+.event-link-btn { flex: 1; }
+
+.status-badge.en_attente { background: var(--warning-light); color: #b45309; }
+.status-badge.valide { background: var(--success-light); color: var(--success); }
+.status-badge.refuse { background: var(--danger-light); color: var(--danger); }
+[data-theme="dark"] .status-badge.en_attente { background: rgba(251, 191, 36, 0.15); color: #fbbf24; }
+[data-theme="dark"] .status-badge.valide { background: rgba(52, 211, 153, 0.15); color: #34d399; }
+[data-theme="dark"] .status-badge.refuse { background: rgba(248, 113, 113, 0.15); color: #f87171; }
 
 /* -- Empty state -- */
 .empty-state {
